@@ -1,0 +1,22 @@
+{
+  "name": "package",
+  "version": "1.0.0",
+  "description": "Projet Service web",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aingels/Projet-Service-web.git"
+  },
+  "author": "Aingels",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Aingels/Projet-Service-web/issues"
+  },
+  "homepage": "https://github.com/Aingels/Projet-Service-web#readme",
+  "dependencies": {
+    "rivescript": "^2.1.0"
+  }
+}
