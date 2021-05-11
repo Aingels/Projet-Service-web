@@ -1,0 +1,23 @@
+{
+  "name": "servicetodo",
+  "version": "1.0.0",
+  "description": "service REST permettant de gérer des tâches (todos)",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.5",
+    "ejs": "^0.8.4",
+    "express": "^3.21.2",
+    "mongodb": "^3.6.6",
+    "xmlhttprequest": "^1.8.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
