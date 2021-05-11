@@ -1,7 +1,8 @@
 const express = require('express');
 const app = expresss();
 const RiveScript = require('rivescript');
-let bot = new RiveScript();
+let bot = new RiveScript({utf8: true});
+bot.unicodePunctuation = new RegExp(/[.,!?;:]/g);
 const bodyParser = require("body-parser");
 
 
@@ -31,7 +32,7 @@ bot.loadFile([
 	app.get("*", showUsage);
 
 	// Start listening.
-	app.listen(2001, function() {
+	app.listen(3000, function() {
 		console.log("Listening on http://localhost:2001");
 	});
   }
