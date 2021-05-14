@@ -4,10 +4,10 @@ var cors = require('cors');
 const RiveScript = require('rivescript');
 
 //rivescript
-let bot = new RiveScript();
+let bot = new RiveScript({utf8: true});
 //charger une personnalite pour le bot
-bot.loadFile("brain/firstbot.rive").then(loading_done).catch(loading_error);
-
+bot.loadFile("serveur/brain/firstbot.rive").then(loading_done).catch(loading_error);
+bot.unicodePunctuation = new RegExp(/[.,!?;:]/g);
 /*// Load a list of files all at once (the best alternative to loadDirectory
 // for the web!)
 bot.loadFile([
@@ -36,10 +36,10 @@ function loading_done(){
   app.use(bodyParser.json());
 
   // Set up routes.
-  app.post('/create', cors(corsOptions),createBot(req, res));
+  app.post('/create', cors(corsOptions), createBot);
   app.post("/reply", getReply);
-  app.get("/", showUsage);
-  app.get("*", showUsage);
+  // app.get("/", showUsage);
+  // app.get("*", showUsage);
 
   // Start listening.
   app.listen(3000, function() {
@@ -63,7 +63,7 @@ function createBot(req, res) {
 
 // POST to /reply to get a RiveScript reply.
 function getReply(req, res) {
-  // Get data from the JSON post.
+  // récupérer les données du post format JSON.
   var username = req.body.username;
   var message  = req.body.message;
   var vars     = req.body.vars;
@@ -82,9 +82,9 @@ function getReply(req, res) {
     }
   }
 
-  // Get a reply from the bot.
+  // Obtenir une réponse du bot.
   bot.reply(username, message, this).then(function(reply) {
-    // Get all the user's vars back out of the bot to include in the response.
+    // Récupérer les variables du bot pour les envoyer dans la réponse.
     vars = bot.getUservars(username);
 
     // Send the JSON response.
@@ -100,3 +100,8 @@ function getReply(req, res) {
     });
   });
 }
+
+function loading_error(loadcount, err) {
+  console.log("Error loading batch #" + loadcount + ": " + err + "\n");
+}
+
