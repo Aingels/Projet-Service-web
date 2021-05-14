@@ -6,7 +6,7 @@ const RiveScript = require('rivescript');
 //rivescript
 let bot = new RiveScript({utf8: true});
 //charger une personnalite pour le bot
-bot.loadFile("serveur/brain/firstbot.rive").then(loading_done).catch(loading_error);
+bot.loadFile("brain/firstbot.rive").then(loading_done).catch(loading_error);
 bot.unicodePunctuation = new RegExp(/[.,!?;:]/g);
 /*// Load a list of files all at once (the best alternative to loadDirectory
 // for the web!)

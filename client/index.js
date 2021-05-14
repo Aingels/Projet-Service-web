@@ -48,11 +48,10 @@ app.post('/create', function(req, res){
 	console.log(`post connexion : tentative de creation bot : ${JSON.stringify(req.body)} : ${bot}`);
 	if(bot!=undefined){
 		console.log("creation bot failed");
-		res.render('create',{});
 	}else{
-		console.log("creation bot suceed");
-		res.render('create',{});
+		console.log("creation bot suceed");		
 	}
+	res.render('create');
   }
 );
 
