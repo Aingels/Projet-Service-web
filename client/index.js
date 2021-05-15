@@ -53,8 +53,14 @@ app.post('/create', function(req, res){
 	}
 	res.render('create');
   }
+
+  
 );
 
 app.listen(port, (err,data) => {
     console.log(`Example app listening on port ${port}!`);
 });
+
+app.get("/chat",(req,res)=> {
+	res.render("chat");
+})

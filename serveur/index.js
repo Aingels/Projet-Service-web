@@ -50,7 +50,16 @@ function loading_done(){
   app.use(function(req, res, next){
     res.setHeader('Content-Type', 'text/plain');
     res.send(404, 'Page introuvable !');
-});
+  });
+
+  // Error handling middleware.
+  app.use((err, req, res, next) => {
+    const isDev = process.env.NODE_ENV === 'development';
+    res.status(500).json({
+      "status": "error",
+      "error": isDev ? err : "Unknown error",
+    });
+  });
 }
 
 function createBot(req, res) {
@@ -62,7 +71,7 @@ function createBot(req, res) {
 }
 
 // POST to /reply to get a RiveScript reply.
-function getReply(req, res) {
+async function getReply(req, res) {
   // récupérer les données du post format JSON.
   var username = req.body.username;
   var message  = req.body.message;
@@ -83,21 +92,31 @@ function getReply(req, res) {
   }
 
   // Obtenir une réponse du bot.
-  bot.reply(username, message, this).then(function(reply) {
-    // Récupérer les variables du bot pour les envoyer dans la réponse.
-    vars = bot.getUservars(username);
+  // bot.reply(username, message, this).then(function(reply) {
+  //   // Récupérer les variables du bot pour les envoyer dans la réponse.
+  //   vars = bot.getUservars(username);
 
-    // Send the JSON response.
-    res.json({
-      "status": "ok",
-      "reply": reply,
-      "vars": vars
-    });
-  }).catch(function(err) {
-    res.json({
-      "status": "error",
-      "error": err
-    });
+  //   // Send the JSON response.
+  //   console.log(reply);
+  //   res.json({
+  //     "status": "ok",
+  //     "reply": reply,
+  //     "vars": vars
+  //   });
+  // }).catch(function(err) {
+  //   res.json({
+  //     "status": "error",
+  //     "error": err
+  //   });
+  // });
+
+  const reply = await bot.reply(username,message,this);
+  vars = bot.getUservars(username);
+
+  res.status(200).json({
+    "status": "ok",
+    "reply": reply,
+    "vars": vars
   });
 }
 
