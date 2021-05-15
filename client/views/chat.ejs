@@ -6,15 +6,49 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Bot</title>
+
+    <base href='/'>
+    <link rel="stylesheet" href="css/home.css" type="text/css">
+    <link rel="stylesheet" href="css/chat.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="scripts/chat.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    
     </head>
     <body>
+        <!-- chat box -->
         <div class="chat">
+            <!-- label -->
             <div class="chat-label-container">
                 <p>I'm here! Chat with me OwO!</p>
             </div>
-            <div class="chat-container">
-                <div class="content">
-                    <div class="chat-history">
+            <!--Content-->
+            <div class="content">
+                <div class="full-chat-block">
+                    <!--Messages History-->
+                    <div class="outer-container">
+                        <div class="chat-container">
+                            <!--Messages-->
+                            <div id="chatbox">
+                                <h5 id="time"></h5>
+                                <p id="botFirstMessage" class="botText"><span>Loading...</span></p>
+                            </div>
+                            <!--Message user input-->
+                            <div class="chat-bar-input-block">
+                                <div id="userInput">
+                                    <input id="textInput" type="text" name="userMessage" placeholder="Enter text here" class="input-box">
+                                    <p></p>
+                                </div>
+                                <div class="chat-bar-icons">
+                                    
+                                    <i id="chat-icon" style="color: #333;" class="fa fa-fw fa-send"
+                                        onclick="sendButton()"></i>
+                                </div>
+                            </div>
+                            <div id="chat-bar-bottom">
+                                <p></p>
+                            </div>
+                        </div>
     
                     </div>
                 </div>
@@ -22,4 +56,7 @@
         </div>
         
     </body>
+    
+    
+
 </html>

@@ -1,2 +1,8 @@
 ./node_modules
 node_modules/
+
+serveur/.jshintrc
+
+serveur/package-lock.json
+
+serveur/package.json
