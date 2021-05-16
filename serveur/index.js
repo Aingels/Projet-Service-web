@@ -4,7 +4,9 @@ var cors = require('cors');
 const RiveScript = require('rivescript');
 
 //rivescript
-let bot = new RiveScript({utf8: true});
+let bot = new RiveScript({utf8: true , errors: {
+  replyNotFound: "I don't know how to reply to that (´ー｀)."
+}});
 //charger une personnalite pour le bot
 bot.loadFile("brain/firstbot.rive").then(loading_done).catch(loading_error);
 bot.unicodePunctuation = new RegExp(/[.,!?;:]/g);

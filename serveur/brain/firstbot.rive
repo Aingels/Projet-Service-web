@@ -1,10 +1,13 @@
-+ hello bot !
++ hello * 
 - hello human !
 
-+ how are you ?
++ how are you 
 - I'm fine and you ?
 - Good and you ?
 - I'm good !
+
++ i am good too
+- Nice !
 
 + tell me a poem
 - Little Miss Muffit sat on her tuffet,\n
@@ -12,6 +15,41 @@
 ^ With her forcefield around her,\n
 ^ The Spider, the bounder,\n
 ^ Is not in the picture today.
+
++ i love you
+- I'll be always here if you need me OwO
+
++ my name is  
+
+//error
++ *
+- I don't know what to say to that!
+
+//some jokes
++ tell me a joke
+- There is someone knocking to Batman's house guess who it is !
+
++ *
+% there is someone knocking to batman s house guess who it is 
+- Not his parents (╯°□°）╯︵ ┻━┻
+
++ call me senpai
+- I'm not into that kind of things ಠ_ಠ.
+
+// If the user repeats the bot's previous message
++ <reply>
+- Don't repeat what I say.
+
+// If the user keeps repeating themselves over and over.
++ <input1>
+* <input1> == <input2> => That's the second time you've repeated yourself.
+* <input1> == <input3> => If you repeat yourself again I'll stop talking.
+* <input1> == <input4> => That's it. I'm not talking.{topic=sorry}
+- Please don't repeat yourself.
+
+// An example that uses both tags
++ why did you say that
+- I said, "<reply>", because you said, "<input>".
 
 // Substitutions
 ! sub i'm     = i am
@@ -30,3 +68,4 @@
 ! sub what've = what have
 ! sub what'll = what will
 ! sub who's   = who is
+! sub batman's = batman s

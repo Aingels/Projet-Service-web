@@ -1,6 +1,10 @@
 // Collapsible
 var coll = document.getElementsByClassName("collapsible");
 
+$( document ).ready(function() {
+    firstBotMessage();
+});
+
 for (let i = 0; i < coll.length; i++) {
     coll[i].addEventListener("click", function () {
         this.classList.toggle("active");
@@ -36,15 +40,20 @@ function getTime() {
 // Gets the first message
 function firstBotMessage() {
     let firstMessage = "How's it going?"
-    document.getElementById("botFirstMessage").innerHTML = '<p class="botText"><span>' + firstMessage + '</span></p>';
+    setTimeout(() => {
+        let botHtml = '<p class="botText"><span>' + firstMessage + '</span></p>';
+         $("#chatbox").append(botHtml);
 
+        document.getElementById("chat-bar-bottom").scrollIntoView(true);
+
+    }, 1000)
     let time = getTime();
-
-    $("#chat-timestamp").append(time);
+    
+    $("#time").append(time);
     document.getElementById("userInput").scrollIntoView(false);
 }
 
-firstBotMessage();
+
 
 // Retrieves the response
 function getHardResponse(userText) {
