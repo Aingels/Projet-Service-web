@@ -18,6 +18,11 @@ bot.loadFile([
     "brain/clients.rive"
   ]).then(loading_done).catch(loading_error);*/
 
+//MongoDB (persistance de données)
+const mongodb = require("mongodb");
+var ServiceMongoDB = require('./ServiceMongoDB.js');
+let mongoDBInstance;
+
 function loading_done(){
   console.log("Brain loaded!");
   bot.sortReplies();
@@ -40,12 +45,17 @@ function loading_done(){
   // Set up routes.
   app.post('/create', cors(corsOptions), createBot);
   app.post("/reply", getReply);
+  app.post('/inscription', cors(corsOptions), inscription);
+  app.post('/connexion', cors(corsOptions), connexion);
   // app.get("/", showUsage);
   // app.get("*", showUsage);
 
-  // Start listening.
-  app.listen(3000, function() {
-    console.log("Listening on http://localhost:3000");
+  // initialisation of ServiceMongoDB and server starts listening
+  ServiceMongoDB.create().then(mDBInst=>{// ts est le retour du constructeur 
+    mongoDBInstance=mDBInst;
+    app.listen(3000, () => {
+        console.log(`Server listening on http://localhost:3000`)
+    });
   });
 
   //erreur URL
@@ -71,6 +81,40 @@ function createBot(req, res) {
   //bot=${req.body};
   //return bot;
 }
+
+function inscription(req, res) {
+  console.log(`post inscription : ${req.body.pseudo}`)
+  //enregistrer user in db
+  var user = mongoDBInstance.addUser(req.body.pseudo);
+  //TODO : deal with multiple same pseudo
+};
+
+async function connexion(req, res) {
+  console.log(`post connexion : ${req.body.pseudo}`)
+  var pseudo = req.body.pseudo;
+  //connexion user in db
+  var user = await mongoDBInstance.getUser(pseudo)
+  //envoyer la réponse
+    .then((result)=>{
+        if(result != null){
+             console.log(`index : user found : ${result.pseudo}`);
+             res.json({
+                "status": "ok",
+             });
+        }else{
+            console.log(`index : user not found : ${result}`);
+            res.json({
+                "status": "wrong id",
+            });
+        }
+    })
+    .catch((err)=>{
+        console.error(err)
+        res.json({
+            "status": "error",
+        });
+    });
+};
 
 // POST to /reply to get a RiveScript reply.
 async function getReply(req, res) {
