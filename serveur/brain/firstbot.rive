@@ -1,6 +1,21 @@
 + hello * 
 - hello human !
 
+! var master  = Nyny
+! var name = Steve
+
++ what is your name 
+- My name is <bot name> ! <id>
+- You can call me <bot name> ! <id>
+
++ my name is *
+- <set username=<star>>It's nice to meet you, <get username>.
+
++ what is my name
+* <get username> == undefined => You never told me your name.
+- Your name is <get username>, silly!
+- Aren't you <get username>?
+
 + how are you 
 - I'm fine and you ?
 - Good and you ?
@@ -19,7 +34,7 @@
 + i love you
 - I'll be always here if you need me OwO
 
-+ my name is  
+
 
 //error
 + *
@@ -27,11 +42,22 @@
 
 //some jokes
 + tell me a joke
+* <reply2> == there is someone knocking to batman s house guess who it is  => Do you know the difference between a plate and a toilet ?
+* <reply2> == do you know the difference between a plate and a toilet   => There is someone knocking to Batman's house guess who it is !
 - There is someone knocking to Batman's house guess who it is !
+- Do you know the difference between a plate and a toilet ?
 
 + *
 % there is someone knocking to batman s house guess who it is 
 - Not his parents (╯°□°）╯︵ ┻━┻
+
++ *
+% do you know the difference between a plate and a toilet 
+- Then I'm never coming to your house (･д･｀o)
+
++ yes
+% do you know the difference between a plate and a toilet 
+- I hope so ₍₍ ◝(●˙꒳˙●)◜ ₎₎
 
 + call me senpai
 - I'm not into that kind of things ಠ_ಠ.

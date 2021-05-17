@@ -6,3 +6,7 @@ serveur/.jshintrc
 serveur/package-lock.json
 
 serveur/package.json
+
+serveur/node_modules
+
+client/node_modules

@@ -10,7 +10,7 @@
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "ejs": "^0.8.4",
-    "express": "^3.21.2",
+    "express": "^4.17.1",
     "mongodb": "^3.6.6",
     "rivescript": "^2.1.0",
     "xmlhttprequest": "^1.8.0"
