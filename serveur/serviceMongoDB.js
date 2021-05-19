@@ -17,18 +17,35 @@ class ServiceMongoDB{
 		var db = client.db("TPNodejs");
 		var collection = db.collection("User");
 		var user = { pseudo: pseudoGiven , mdp : mdpGiven};
-		var result =  await collection.insertOne(user);
-		//TODO : deal with multiple same pseudo
-		console.log(`Client : ${pseudoGiven} , ${mdpGiven} ajouté à la DB.`);
-		client.close();
-		return client;
+		//envoyer la réponse
+		var pseudoAlreadyTaken = await collection.findOne({pseudo : pseudoGiven});
+		if(pseudoAlreadyTaken != null){
+			console.log(`Erreur : pseudo déjà utilisé : ${pseudoAlreadyTaken}!`);
+			return null;
+		}else{
+			return await collection.insertOne(user)
+		    .then((result)=>{
+		    	if(result != null){
+		    		console.log(`MongoDB > addUser : ${pseudoGiven} , ${mdpGiven}`);
+			        client.close();
+		    	}else{
+		    		console.log('MongoDB > addUser : error');
+		    		client.close();
+		    	}
+		    	client.close();
+		    	return result;
+		    })
+		    .catch((err)=>{
+		        console.error(err)
+		    });
+		}
 	}
 
-	async getUser(pseudoGiven){ 
+	async getUser(pseudoGiven , mdpGiven){ 
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");
 		var collection = db.collection("User");
-		var user = { pseudo: pseudoGiven };
+		var user = { pseudo: pseudoGiven , mdp : mdpGiven};
 		//envoyer la réponse
 		return await collection.findOne(user)
 		    .then((result)=>{

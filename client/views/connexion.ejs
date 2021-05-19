@@ -12,6 +12,9 @@
     <div class="jumbotron">
       <h1>Connexion</h1>
       <form action="" method="POST">
+        <% if (locals.wrongId) {%>
+          <label>Le pseudo ou le mot de passe est incorrect, merci de ré-essayer.</label><br>
+        <% } %>
         <label>Pseudo : </label>
         <input type="text" name="pseudo"/> <br>
         <label>Mot de passe : </label>

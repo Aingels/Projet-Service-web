@@ -65,22 +65,40 @@ app.get('/inscription', function(req, res){
   }
 );
 
-app.post('/inscription', function(req, res){
+app.post('/inscription', async function(req, res){
 	console.log(`post inscription : ajouter un user : ${JSON.stringify(req.body.pseudo)} , ${JSON.stringify(req.body.mdp)}`);
+	var data=req.body;
 	var pseudoGiven=req.body.pseudo;
 	var mdpGiven=req.body.mdp;
 
 	//fetch request
-	fetch('http://localhost:3000/inscription', 
-		{method:"POST",
+	await fetch('http://localhost:3000/inscription', 
+		{
+			//mode: 'no-cors',
+			method:"POST",
 		 	headers: {
 		      'Accept': 'application/json',
 		      'Content-Type': 'application/json'
 		    },
-		    body: JSON.stringify(req.body)}
-		);
-
-    res.render('discuss',{pseudo:pseudoGiven, mdp:mdpGiven});
+		    body: JSON.stringify(data)
+		})
+		//traitement de la réponse
+		.then(response => response.json())//pay attention not using res twice 
+		.then(response => {
+			console.log(`Inscription du user : ${JSON.stringify(req.body.pseudo)} , ${JSON.stringify(req.body.mdp)} : ${response.status}`);
+			if(response.status=="ok"){
+				//passer le user en paramètre : session ou paramètre ejs ou paramètre get
+				//req.session.pseudo = req.body.pseudo;//stockage pseudo user dans session
+				//res.redirect('discuss',{"pseudo":req.body.pseudo});
+				//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
+				res.render(`discuss`,{pseudo:pseudoGiven});
+			}else{
+				res.render('inscription',{pseudoAlreadyTaken:true});
+			}
+		})
+		.catch((err)=>{
+              console.log(`(error) inscription du user : ${JSON.stringify(req.body.pseudo)} , ${JSON.stringify(req.body.mdp)}: ${response.status}`);
+        });
   }
 );
 
@@ -94,6 +112,7 @@ app.post('/connexion', async function(req, res){
 	console.log(`post connexion`);
 	var data=req.body;
 	var pseudoGiven=data.pseudo;
+	var mdpGiven=data.mdp;
 
 	//fetch request
 	await fetch('http://localhost:3000/connexion', 
@@ -117,7 +136,7 @@ app.post('/connexion', async function(req, res){
 				//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
 				res.render(`discuss`,{pseudo:pseudoGiven});
 			}else{
-				res.redirect('connexion');
+				res.render('connexion',{wrongId:true});
 			}
 		})
 		.catch((err)=>{

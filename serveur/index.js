@@ -82,18 +82,39 @@ function createBot(req, res) {
   //return bot;
 }
 
-function inscription(req, res) {
+async function inscription(req, res) {
   console.log(`post inscription : ${req.body.pseudo}, ${req.body.mdp}`)
   //enregistrer user in db
-  var user = mongoDBInstance.addUser(req.body.pseudo, req.body.mdp);
+  var user = await mongoDBInstance.addUser(req.body.pseudo, req.body.mdp)
+  //envoyer la réponse
+    .then((result)=>{
+        if(result != null){
+             console.log(`index : user found : ${result.pseudo}`);
+             res.json({
+                "status": "ok",
+             });
+        }else{
+            console.log(`index : pseudo already taken : ${result}`);
+            res.json({
+                "status": "pseudo already taken",
+            });
+        }
+    })
+    .catch((err)=>{
+        console.error(err)
+        res.json({
+            "status": "error",
+        });
+    });
   //TODO : deal with multiple same pseudo
 };
 
 async function connexion(req, res) {
   console.log(`post connexion : ${req.body.pseudo}`)
   var pseudo = req.body.pseudo;
+  var mdp = req.body.mdp;
   //connexion user in db
-  var user = await mongoDBInstance.getUser(pseudo)
+  var user = await mongoDBInstance.getUser(pseudo,mdp)
   //envoyer la réponse
     .then((result)=>{
         if(result != null){

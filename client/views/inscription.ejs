@@ -12,6 +12,9 @@
     <div class="jumbotron">
       <h1>Inscription</h1>
       <form action="" method="POST">
+        <% if (locals.pseudoAlreadyTaken) {%>
+          <label>Ce pseudo est déjà pris, merci d'en choisir un autre.</label><br>
+        <% } %>
         <label>Pseudo : </label>
         <input type="text" name="pseudo"/> <br>
         <label>Mot de passe : </label>
