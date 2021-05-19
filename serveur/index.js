@@ -83,9 +83,9 @@ function createBot(req, res) {
 }
 
 function inscription(req, res) {
-  console.log(`post inscription : ${req.body.pseudo}`)
+  console.log(`post inscription : ${req.body.pseudo}, ${req.body.mdp}`)
   //enregistrer user in db
-  var user = mongoDBInstance.addUser(req.body.pseudo);
+  var user = mongoDBInstance.addUser(req.body.pseudo, req.body.mdp);
   //TODO : deal with multiple same pseudo
 };
 

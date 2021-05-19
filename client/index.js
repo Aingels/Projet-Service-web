@@ -66,8 +66,9 @@ app.get('/inscription', function(req, res){
 );
 
 app.post('/inscription', function(req, res){
-	console.log(`post inscription : ajouter un user : ${JSON.stringify(req.body.pseudo)}`);
+	console.log(`post inscription : ajouter un user : ${JSON.stringify(req.body.pseudo)} , ${JSON.stringify(req.body.mdp)}`);
 	var pseudoGiven=req.body.pseudo;
+	var mdpGiven=req.body.mdp;
 
 	//fetch request
 	fetch('http://localhost:3000/inscription', 
@@ -79,7 +80,7 @@ app.post('/inscription', function(req, res){
 		    body: JSON.stringify(req.body)}
 		);
 
-    res.render('discuss',{pseudo:pseudoGiven});
+    res.render('discuss',{pseudo:pseudoGiven, mdp:mdpGiven});
   }
 );
 

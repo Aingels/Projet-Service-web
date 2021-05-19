@@ -12,14 +12,14 @@ class ServiceMongoDB{
 		return service;
 	}
 
-	async addUser(pseudoGiven){ 
+	async addUser(pseudoGiven, mdpGiven){ 
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");
 		var collection = db.collection("User");
-		var user = { pseudo: pseudoGiven };
+		var user = { pseudo: pseudoGiven , mdp : mdpGiven};
 		var result =  await collection.insertOne(user);
 		//TODO : deal with multiple same pseudo
-		console.log(`Client : ${pseudoGiven} ajouté à la DB.`);
+		console.log(`Client : ${pseudoGiven} , ${mdpGiven} ajouté à la DB.`);
 		client.close();
 		return client;
 	}
