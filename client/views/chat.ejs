@@ -16,6 +16,11 @@
     <script src="scripts/chat.js"></script>
     </head>
     <body>
+        <% if (locals.isAdmin) {%>
+          <% if (isAdmin) {%>
+              <a href="administration">Interface d'administration</a><br>
+          <% } %>
+        <% } %>
         <!-- chat box -->
         <div class="chat">
             <!-- label -->

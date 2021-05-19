@@ -43,7 +43,7 @@ function loading_done(){
   app.use(bodyParser.json());
 
   // Set up routes.
-  app.post('/create', cors(corsOptions), createBot);
+  app.post('/administration', cors(corsOptions), createBot);
   app.post("/reply", getReply);
   app.post('/inscription', cors(corsOptions), inscription);
   app.post('/connexion', cors(corsOptions), connexion);
@@ -121,6 +121,7 @@ async function connexion(req, res) {
              console.log(`index : user found : ${result.pseudo}`);
              res.json({
                 "status": "ok",
+                "isAdmin": result.isAdmin,
              });
         }else{
             console.log(`index : user not found : ${result}`);

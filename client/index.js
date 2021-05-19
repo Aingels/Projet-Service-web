@@ -14,23 +14,23 @@ app.use(bodyParser.json());
 //default url
 app.get('/', function(req, res){
     console.log("get /")
-    res.render('create',{});
+    res.render('connexion',{});
   }
 );
 
 //création d'un bot
-app.get('/create', function(req, res){
-	console.log("get /create")
-    res.render('create',{});
+app.get('/administration', function(req, res){
+	console.log("get /administration")
+    res.render('administration',{});
   }
 );
 
-app.post('/create', function(req, res){
-	console.log("post /create")
+app.post('/administration', function(req, res){
+	console.log("post /administration")
 	var bot;
 	var data=req.body;
 	//fetch
-	fetch('http://localhost:3000/create', 
+	fetch('http://localhost:3000/administration', 
 		{
 			//mode: 'no-cors',
 			method:"POST",
@@ -49,10 +49,10 @@ app.post('/create', function(req, res){
 	console.log(`post connexion : tentative de creation bot : ${JSON.stringify(req.body)} : ${bot}`);
 	if(bot!=undefined){
 		console.log("creation bot suceed");
-		res.redirect('connexion');
+		res.redirect('administration');
 	}else{
 		console.log("creation bot failed");		
-		res.redirect('create');
+		res.redirect('administration');
 	}
   }
 
@@ -91,7 +91,7 @@ app.post('/inscription', async function(req, res){
 				//req.session.pseudo = req.body.pseudo;//stockage pseudo user dans session
 				//res.redirect('discuss',{"pseudo":req.body.pseudo});
 				//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
-				res.render(`discuss`,{pseudo:pseudoGiven});
+				res.render(`chat`,{pseudo:pseudoGiven});
 			}else{
 				res.render('inscription',{pseudoAlreadyTaken:true});
 			}
@@ -134,7 +134,7 @@ app.post('/connexion', async function(req, res){
 				//req.session.pseudo = req.body.pseudo;//stockage pseudo user dans session
 				//res.redirect('discuss',{"pseudo":req.body.pseudo});
 				//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
-				res.render(`discuss`,{pseudo:pseudoGiven});
+				res.render(`chat`,{pseudo:pseudoGiven , isAdmin:response.isAdmin});
 			}else{
 				res.render('connexion',{wrongId:true});
 			}
@@ -144,6 +144,12 @@ app.post('/connexion', async function(req, res){
         });
   }
 );
+
+app.get("/chat",(req,res)=> {
+	console.log("get /chat")
+	//todo : vérifier droit user
+	res.render("chat");
+})
 
 app.get('/discuss', function(req, res){
 	console.log("get /discuss")
@@ -155,6 +161,3 @@ app.listen(port, (err,data) => {
     console.log(`Client server listening on port ${port}`);
 });
 
-app.get("/chat",(req,res)=> {
-	res.render("chat");
-})
