@@ -18,47 +18,6 @@ app.get('/', function(req, res){
   }
 );
 
-//création d'un bot
-app.get('/administration', function(req, res){
-	console.log("get /administration")
-    res.render('administration',{});
-  }
-);
-
-app.post('/administration', function(req, res){
-	console.log("post /administration")
-	var bot;
-	var data=req.body;
-	//fetch
-	fetch('http://localhost:3000/administration', 
-		{
-			//mode: 'no-cors',
-			method:"POST",
-		 	headers: {
-		      'Accept': 'application/json',
-		      'Content-Type': 'application/json'
-		    },
-		    body: JSON.stringify(data)
-		})
-		.then(res => res.json())
-		.then(data => {
-			console.log(`res : ${data}`);
-			bot=data;//le serveur renvoi le bot
-		});	
-
-	console.log(`post connexion : tentative de creation bot : ${JSON.stringify(req.body)} : ${bot}`);
-	if(bot!=undefined){
-		console.log("creation bot suceed");
-		res.redirect('administration');
-	}else{
-		console.log("creation bot failed");		
-		res.redirect('administration');
-	}
-  }
-
-  
-);
-
 app.get('/inscription', function(req, res){
 	console.log("get inscription")
     res.render('inscription',{});
@@ -151,9 +110,76 @@ app.get("/chat",(req,res)=> {
 	res.render("chat");
 })
 
-app.get('/discuss', function(req, res){
-	console.log("get /discuss")
-    res.render('discuss',{});
+//création d'un bot
+app.get('/administration', function(req, res){
+	console.log("get /administration")
+    res.render('adminCreerBot',{});
+  }
+);
+
+app.post('/creerBot', function(req, res){
+	console.log("post /creerBot")
+	var bot;
+	var data=req.body;
+	//fetch
+	fetch('http://localhost:3000/creerBot', 
+		{
+			//mode: 'no-cors',
+			method:"POST",
+		 	headers: {
+		      'Accept': 'application/json',
+		      'Content-Type': 'application/json'
+		    },
+		    body: JSON.stringify(data)
+		})
+		.then(res => res.json())
+		.then(data => {
+			console.log(`res : ${data}`);
+			bot=data;//le serveur renvoi le bot
+		});	
+
+	console.log(`post connexion : tentative de creation bot : ${JSON.stringify(req.body)} : ${bot}`);
+	res.redirect('adminChoixCerveau');
+	/* todo : implement creation bot cote serveur avec le nom donne
+	if(bot!=undefined){
+		console.log("creation bot suceed");
+		res.redirect('administration');
+	}else{
+		console.log("creation bot failed");		
+		res.redirect('administration');
+	}
+	*/
+  }
+);
+
+app.get('/adminChoixCerveau', function(req, res){
+	console.log("get /adminChoixCerveau")
+    res.render('adminChoixCerveau',{});
+  }
+);
+
+app.post('/adminChoixCerveau', function(req, res){
+	console.log("post /adminChoixCerveau")
+	var bot;
+	var data=req.body;
+	//fetch
+	fetch('http://localhost:3000/adminChoixCerveau', 
+		{
+			//mode: 'no-cors',
+			method:"POST",
+		 	headers: {
+		      'Accept': 'application/json',
+		      'Content-Type': 'application/json'
+		    },
+		    body: JSON.stringify(data)
+		})
+		.then(res => res.json())
+		.then(data => {
+			console.log(`res : ${data}`);
+			bot=data;//le serveur renvoi le bot
+		});	
+
+	res.redirect('adminChoixCerveau');
   }
 );
 

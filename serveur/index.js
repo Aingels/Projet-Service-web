@@ -43,7 +43,7 @@ function loading_done(){
   app.use(bodyParser.json());
 
   // Set up routes.
-  app.post('/administration', cors(corsOptions), createBot);
+  app.post('/creerBot', cors(corsOptions), createBot);
   app.post("/reply", getReply);
   app.post('/inscription', cors(corsOptions), inscription);
   app.post('/connexion', cors(corsOptions), connexion);
