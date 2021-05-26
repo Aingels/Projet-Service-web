@@ -152,6 +152,9 @@ function createBot(port,req, res) {
   //création d'un serveur pour le nouveau robot conversationnel
   const app = createRivescriptServer(bot, port); 
   app.listen(port);
+  res.status(200).json({
+    "status":"bot created"
+  })
   console.log("New bot is listening to port:",port);
 }
 
