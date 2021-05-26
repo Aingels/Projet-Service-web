@@ -63,6 +63,43 @@ class ServiceMongoDB{
 		        console.error(err)
 		    });
 	}
+	async addBot(botName){
+		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
+		var db = client.db("TPNodejs");
+		var collection = db.collection("User");
+		var botNameAlreadyTaken = await collection.findOne({botName : botName});
+		let port = getRandomArbitrary(3002, 3100)
+		var portAlreadyTaken = await collection.findOne({port : port});
+		if(botNameAlreadyTaken != null){
+			console.log(`Erreur : nom de bot déjà utilisé : ${botNameAlreadyTaken}!`);
+			return null;
+		}else{
+			while(portAlreadyTaken!=null){
+				port = getRandomArbitrary(3002, 3100)
+				portAlreadyTaken = await collection.findOne({port : port});
+			}
+			const bot = {botName:botName,port:port}
+			collection.insertOne(bot)
+		    .then((result)=>{
+		    	if(result != null){
+		    		console.log(`MongoDB > addBot : ${botName} , ${port}`);
+			        client.close();
+		    	}else{
+		    		console.log('MongoDB > addBot : error');
+		    		client.close();
+		    	}
+		    	client.close();
+		    })
+		    .catch((err)=>{
+		        console.error(err)
+		    });
+			return port;
+		}
+	}
+}
+
+function getRandomArbitrary(min, max) {
+	return Math.random() * (max - min) + min;
 }
 
 module.exports = ServiceMongoDB;
