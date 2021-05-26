@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 //default url
 app.get('/', function(req, res){
     console.log("get /")
-    res.render('connexion',{});
+    res.redirect('connexion');
   }
 );
 
@@ -106,23 +106,50 @@ app.post('/connexion', async function(req, res){
 
 app.get("/chat",(req,res)=> {
 	console.log("get /chat")
-	//todo : vérifier droit user
+	let port = req.query.port;
 	res.render("chat");
 })
 
+//discussion avec le bot sur un nouveau port
+app.post("/chat",(req,res)=> {
+	console.log("post /chat")
+	//todo : discussion avec le bot sur un nouveau port
+})
+
 //création d'un bot
-app.get('/administration', function(req, res){
+app.get('/administration', async function(req, res){
 	console.log("get /administration")
-    res.render('adminCreerBot',{});
+
+	console.log("recupererCerveaux");
+
+	//fetch request
+	await fetch('http://localhost:3000/recupererCerveaux')
+		//traitement de la réponse
+		.then(response => response.json())//pay attention not using res twice 
+		.then(response => {
+			console.log(`recupererCerveaux : ${response.status}`);
+			if(response.status=="ok"){
+				console.log(`cerveaux :`);
+				for(const cerveau of response.cerveaux){
+					console.log(`${cerveau}`);
+				}
+				res.render(`adminCreerBot`,{"cerveaux":response.cerveaux});
+			}else{
+				res.render('adminCreerBot',{});
+			}
+		})
+		.catch((err)=>{
+              console.log(`(error) recupererCerveaux : ${response.status}`);
+        });    
   }
 );
 
-app.post('/creerBot', function(req, res){
-	console.log("post /creerBot")
-	var bot;
+app.post('/administration', async function(req,res){
+	console.log("post /administration");
 	var data=req.body;
+
 	//fetch
-	fetch('http://localhost:3000/creerBot', 
+	await fetch('http://localhost:3000/creerBot', 
 		{
 			//mode: 'no-cors',
 			method:"POST",
@@ -132,54 +159,24 @@ app.post('/creerBot', function(req, res){
 		    },
 		    body: JSON.stringify(data)
 		})
-		.then(res => res.json())
-		.then(data => {
-			console.log(`res : ${data}`);
-			bot=data;//le serveur renvoi le bot
-		});	
-
-	console.log(`post connexion : tentative de creation bot : ${JSON.stringify(req.body)} : ${bot}`);
-	res.redirect('adminChoixCerveau');
-	/* todo : implement creation bot cote serveur avec le nom donne
-	if(bot!=undefined){
-		console.log("creation bot suceed");
-		res.redirect('administration');
-	}else{
-		console.log("creation bot failed");		
-		res.redirect('administration');
-	}
-	*/
-  }
-);
-
-app.get('/adminChoixCerveau', function(req, res){
-	console.log("get /adminChoixCerveau")
-    res.render('adminChoixCerveau',{});
-  }
-);
-
-app.post('/adminChoixCerveau', function(req, res){
-	console.log("post /adminChoixCerveau")
-	var bot;
-	var data=req.body;
-	//fetch
-	fetch('http://localhost:3000/adminChoixCerveau', 
-		{
-			//mode: 'no-cors',
-			method:"POST",
-		 	headers: {
-		      'Accept': 'application/json',
-		      'Content-Type': 'application/json'
-		    },
-		    body: JSON.stringify(data)
+		.then(response => response.json())//pay attention not using res twice 
+		.then(response => {
+			console.log(`post administration : tentative de creation bot : ${JSON.stringify(response.status)}`);
+			if(response.status=="bot created"){
+				console.log("creation bot suceed");
+				console.log(`botName : ${response.botName}`);
+				console.log(`botCerveau : ${response.botCerveau}`);
+				console.log(`botPort : ${response.botPort}`);
+			    res.redirect(`chat?port=${response.botPort}`);
+			  
+			}else{
+				console.log("creation bot failed (nom de bot déjà pris)");		
+				res.render('adminCreerBot',{"nomPris":true,"cerveaux":response.cerveaux});
+			}
 		})
-		.then(res => res.json())
-		.then(data => {
-			console.log(`res : ${data}`);
-			bot=data;//le serveur renvoi le bot
-		});	
-
-	res.redirect('adminChoixCerveau');
+		.catch((err)=>{
+            console.log(`(error) creerBot : ${response.status}`);
+        });	
   }
 );
 
