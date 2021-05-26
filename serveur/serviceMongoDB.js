@@ -68,7 +68,7 @@ class ServiceMongoDB {
 		var db = client.db("TPNodejs");
 		var collection = db.collection("Bots");
 		var botNameAlreadyTaken = await collection.findOne({ botName: botName });
-		let port = Math.random() * (3100 - 3002) + 3002;
+		let port = parseInt(Math.random() * (3100 - 3002) + 3002);
 		var portAlreadyTaken = await collection.findOne({ port: port });
 		if (botNameAlreadyTaken != null) {
 			console.log(`Erreur : nom de bot déjà utilisé : ${botNameAlreadyTaken}!`);

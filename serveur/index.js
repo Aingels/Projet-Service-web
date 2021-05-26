@@ -111,7 +111,12 @@ async function addNewBot(req,res){
   //ajouter le bot dans la base de données et détermination d'un port disponible
   const port = await mongoDBInstance.addBot(req.body.botName);
   //créer nouveaux bot
+  
   createBot(port,req,res);
+  
+  
+  
+
 }
 
 async function getBots(){
@@ -122,7 +127,7 @@ async function getBots(){
 
 function createBot(port,req, res) {
   console.log(`post /create`)
-  console.log(`nom (formulaire) : ${req.body.nom}`)
+  console.log(`nom (formulaire) : ${req.body.botName}`)
 
 
   //rivescript
@@ -169,7 +174,9 @@ function createRivescriptServer(bot, port) {
   app.use(bodyParser.json());
 
   // Set up routes.
-  app.post("/reply", getReply(bot));
+  app.post("/reply", (req,res)=>{
+    getReply(bot,req,res);
+  });
 
   //erreur URL
   app.use(function (req, res, next) {
