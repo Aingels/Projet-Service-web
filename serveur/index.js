@@ -35,9 +35,15 @@ let mongoDBInstance;
 ServiceMongoDB.create().then(mDBInst => {// ts est le retour du constructeur 
   mongoDBInstance = mDBInst;
   app.listen(3000, () => {
-    console.log(`Server listening on http://localhost:3000`)
+    console.log(`Server listening on http://localhost:3000`);
   });
 });
+
+function launchBotsServers(){
+  mongoDBInstance.collection("Bots").find("SELECT * FROM Bots").each(element => {
+    createBot(port,req,res);
+  });
+}
 
 /*// Load a list of files all at once (the best alternative to loadDirectory
 // for the web!)
@@ -126,8 +132,9 @@ async function addNewBot(req,res){
   }
 }
 
-async function getBots(){
-  return await mongoDBInstance.getBots();
+async function getBots(req,res){
+  const botlist = await mongoDBInstance.getBots();
+  res.json(botlist);
 }
 
 //----------------------fonctions de création de serveurs pour les bots------------------
@@ -260,8 +267,9 @@ function getReply(bot,req,res) {
 }
 
 async function recupererCerveaux(req, res) {
-  console.log(`get recupererCerveaux`)
-
+  
+  const bots  = await mongoDBInstance.getBots();
+  console.log(`get bots`,bots);
   //envoyer la réponse
   res.status(200).json({
       "status": "ok",

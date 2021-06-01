@@ -108,7 +108,7 @@ class ServiceMongoDB {
 	async getBots() {
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");
-		return db.collection("Bots");
+		return await db.collection("Bots").find("SELECT * FROM Bots").toArray();
 	}
 
 	
