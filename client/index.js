@@ -63,21 +63,21 @@ app.post('/inscription', async function(req, res){
 			console.log(`recupererBots : ${response.status}`);
 			if(response.status=="ok"){
 				//affichage
+				/*
 				console.log(`bots :`);
 				for(const bot of response.bots){
 					console.log(`${bot}`);
-				}
+				}*/
 				bots=response.bots;
 			}else{
 				bots=null;
 			}
-			console.log(`${bots}`);
 		})
 		.catch((err)=>{
 	          console.log(`(error) recupererBots : ${response.status}`);
 	    });
 
-		res.render(`chat`,{pseudo:pseudoGiven , isAdmin:false , "bots":bots});
+		res.render(`chat`,{'botPort':-1 , pseudo:pseudoGiven , isAdmin:false , "bots":bots});
 	}else{
 		res.render('inscription',{pseudoAlreadyTaken:true});
 	}
@@ -129,21 +129,21 @@ app.post('/connexion', async function(req, res){
 			console.log(`recupererBots : ${response.status}`);
 			if(response.status=="ok"){
 				//affichage
+				/*
 				console.log(`bots :`);
 				for(const bot of response.bots){
 					console.log(`${bot}`);
-				}
+				}*/
 				bots=response.bots;
 			}else{
 				bots=null;
 			}
-			console.log(`${bots}`);
 		})
 		.catch((err)=>{
 	          console.log(`(error) recupererBots : ${response.status}`);
 	    });
 
-		res.render(`chat`,{pseudo:pseudoGiven , isAdmin:response.isAdmin , "bots":bots});
+		res.render(`chat`,{'botPort':-1 , pseudo:pseudoGiven , isAdmin:response.isAdmin , "bots":bots});
 	}else{
 		res.render('connexion',{wrongId:true});
 	}
@@ -195,7 +195,7 @@ app.post('/administration', async function(req,res){
 	var data=req.body;
 
 	//fetch
-	await fetch('http://localhost:3000/creerBot', 
+	const response = await fetch('http://localhost:3000/creerBot', 
 		{
 			//mode: 'no-cors',
 			method:"POST",
@@ -206,23 +206,47 @@ app.post('/administration', async function(req,res){
 		    body: JSON.stringify(data)
 		})
 		.then(response => response.json())//pay attention not using res twice 
-		.then(response => {
-			console.log(`post administration : tentative de creation bot : ${JSON.stringify(response.status)}`);
-			if(response.status=="bot created"){
-				console.log("creation bot suceed");
-				console.log(`botName : ${response.botName}`);
-				console.log(`botCerveau : ${response.botCerveau}`);
-				console.log(`botPort : ${response.botPort}`);
-			    res.redirect(`chat?port=${response.botPort}`);
-			  
-			}else{
-				console.log("creation bot failed (nom de bot déjà pris)");		
-				res.render('adminCreerBot',{"nomPris":true,"cerveaux":response.cerveaux});
-			}
-		})
 		.catch((err)=>{
             console.log(`(error) creerBot : ${response.status}`);
         });	
+    console.log(`post administration : tentative de creation bot : ${JSON.stringify(response.status)}`);
+	if(response.status=="bot created"){
+
+		console.log("creation bot suceed");
+		console.log(`botName : ${response.botName}`);
+		console.log(`botCerveau : ${response.botCerveau}`);
+		console.log(`botPort : ${response.botPort}`);
+		let botPort=response.botPort;
+
+		//récupération des bots
+		let bots;
+		//fetch request
+		await fetch('http://localhost:3000/recupererBots')
+		//traitement de la réponse
+		.then(response => response.json())//pay attention not using res twice 
+		.then(response => {
+			console.log(`recupererBots : ${response.status}`);
+			if(response.status=="ok"){
+				//affichage
+				/*
+				console.log(`bots :`);
+				for(const bot of response.bots){
+					console.log(`${bot}`);
+				}*/
+				bots=response.bots;
+			}else{
+				bots=null;
+			}
+		})
+		.catch((err)=>{
+	          console.log(`(error) recupererBots : ${response.status}`);
+	    });
+
+	    res.render(`chat`,{'botPort':botPort , "bots":bots});
+	}else{
+		console.log("creation bot failed (nom de bot déjà pris)");		
+		res.render('adminCreerBot',{"nomPris":true,"cerveaux":response.cerveaux});
+	}
   }
 );
 

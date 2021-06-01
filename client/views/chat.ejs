@@ -16,7 +16,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="scripts/chat.js"></script>
     </head>
-    <body>
+    <body onload="chooseBot(<%= botPort %>)">
         <% if (locals.isAdmin) {%>
           <% if (isAdmin) {%>
               <a href="administration">Interface d'administration</a><br>
@@ -62,19 +62,17 @@
         </div>
         
         <!-- select a bot -->  
-        <div class="selectionBot"> 
-            <form action="selectBot" method="POST">       
-                <h1>Veuillez selectionner un bot parmis ceux disponible :</h1> 
- 
-                <select name="bot"> 
-                    <% bots.forEach(function(bot){ %>
-                        <option><%= bot[0] %></option>
-                    <% }); %>
-                </select> 
-    
-                <br><br> 
-                <input type="submit" value="Submit"> 
-            </form> 
+        <div class="selectionBot">       
+            <h1>Veuillez selectionner un bot parmis ceux disponible :</h1> 
+
+            <select name="bot" id="selectionBot"> 
+                <% bots.forEach(function(bot){ %>
+                    <option value="<%= bot[1] %>"><%= bot[0] %></option>
+                <% }); %>
+            </select> 
+
+            <i id="chat-icon" style="color: #0;" class="fa fa-fw fa-send"
+                                    onclick="chooseBot(document.getElementById('selectionBot').value);"></i> 
         </div>     
 
     </body>

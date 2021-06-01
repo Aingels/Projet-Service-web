@@ -328,7 +328,7 @@ async function recupererCerveaux(req, res) {
 
 async function recupererBots(req, res) {
   const bots  = await mongoDBInstance.getBots();
-  console.log(`get bots`,bots);
+  console.log(`get bots`);
 
   //mise au bon format
   let botTab=[];
@@ -337,7 +337,7 @@ async function recupererBots(req, res) {
   for (i = 0; i < botTab.length; i++) { 
     botTab2[i] = [ botTab[i].bot.botName , botTab[i].bot.port , botTab[i].bot.brain ];
   }
-  console.log(`recupererBots renvoie : `,botTab2);
+  //console.log(`recupererBots renvoie : `,botTab2);
 
   //envoyer la réponse
   res.status(200).json({
