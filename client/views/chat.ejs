@@ -10,6 +10,7 @@
     <base href='/'>
     <link rel="stylesheet" href="css/home.css" type="text/css">
     <link rel="stylesheet" href="css/chat.css" type="text/css">
+    <link rel="stylesheet" href="css/selectionBot.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -60,6 +61,22 @@
             </div>
         </div>
         
+        <!-- select a bot -->  
+        <div class="selectionBot"> 
+            <form action="selectBot" method="POST">       
+                <h1>Veuillez selectionner un bot parmis ceux disponible :</h1> 
+ 
+                <select name="bot"> 
+                    <% bots.forEach(function(bot){ %>
+                        <option><%= bot[0] %></option>
+                    <% }); %>
+                </select> 
+    
+                <br><br> 
+                <input type="submit" value="Submit"> 
+            </form> 
+        </div>     
+
     </body>
     
     

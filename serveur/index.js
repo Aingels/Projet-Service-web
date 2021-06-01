@@ -25,7 +25,7 @@ app.post('/inscription', cors(corsOptions), inscription);
 app.post('/connexion', cors(corsOptions), connexion);
 app.get('/bots', getBots);
 app.get('/recupererCerveaux', recupererCerveaux);
-app.get('/recupererCerveaux', recupererCerveaux);
+app.get('/recupererBots', recupererBots);
 
 
 //MongoDB (persistance de données)
@@ -326,14 +326,22 @@ async function recupererCerveaux(req, res) {
   });
 };
 
-async function recupererCerveaux(req, res) {
-  /*
+async function recupererBots(req, res) {
   const bots  = await mongoDBInstance.getBots();
   console.log(`get bots`,bots);
-  */
+
+  //mise au bon format
+  let botTab=[];
+  let botTab2=[];
+  bots.forEach(bot => botTab.push( { bot } ) );
+  for (i = 0; i < botTab.length; i++) { 
+    botTab2[i] = [ botTab[i].bot.botName , botTab[i].bot.port , botTab[i].bot.brain ];
+  }
+  console.log(`recupererBots renvoie : `,botTab2);
+
   //envoyer la réponse
   res.status(200).json({
-    "status": "ok",
-    "cerveaux": ["standard", "firstbot"],
+      "status": "ok",
+      "bots": botTab2,
   });
 };

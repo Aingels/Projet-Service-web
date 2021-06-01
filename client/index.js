@@ -31,7 +31,7 @@ app.post('/inscription', async function(req, res){
 	var mdpGiven=req.body.mdp;
 
 	//fetch request
-	await fetch('http://localhost:3000/inscription', 
+	const response = await fetch('http://localhost:3000/inscription', 
 		{
 			//mode: 'no-cors',
 			method:"POST",
@@ -43,21 +43,44 @@ app.post('/inscription', async function(req, res){
 		})
 		//traitement de la réponse
 		.then(response => response.json())//pay attention not using res twice 
-		.then(response => {
-			console.log(`Inscription du user : ${JSON.stringify(req.body.pseudo)} , ${JSON.stringify(req.body.mdp)} : ${response.status}`);
-			if(response.status=="ok"){
-				//passer le user en paramètre : session ou paramètre ejs ou paramètre get
-				//req.session.pseudo = req.body.pseudo;//stockage pseudo user dans session
-				//res.redirect('discuss',{"pseudo":req.body.pseudo});
-				//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
-				res.render(`chat`,{pseudo:pseudoGiven});
-			}else{
-				res.render('inscription',{pseudoAlreadyTaken:true});
-			}
-		})
 		.catch((err)=>{
               console.log(`(error) inscription du user : ${JSON.stringify(req.body.pseudo)} , ${JSON.stringify(req.body.mdp)}: ${response.status}`);
         });
+    console.log(`Inscription du user : ${JSON.stringify(req.body.pseudo)} , ${JSON.stringify(req.body.mdp)} : ${response.status}`);
+	if(response.status=="ok"){
+		//passer le user en paramètre : session ou paramètre ejs ou paramètre get
+		//req.session.pseudo = req.body.pseudo;//stockage pseudo user dans session
+		//res.redirect('discuss',{"pseudo":req.body.pseudo});
+		//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
+
+		//récupération des bots
+		let bots;
+		//fetch request
+		await fetch('http://localhost:3000/recupererBots')
+		//traitement de la réponse
+		.then(response => response.json())//pay attention not using res twice 
+		.then(response => {
+			console.log(`recupererBots : ${response.status}`);
+			if(response.status=="ok"){
+				//affichage
+				console.log(`bots :`);
+				for(const bot of response.bots){
+					console.log(`${bot}`);
+				}
+				bots=response.bots;
+			}else{
+				bots=null;
+			}
+			console.log(`${bots}`);
+		})
+		.catch((err)=>{
+	          console.log(`(error) recupererBots : ${response.status}`);
+	    });
+
+		res.render(`chat`,{pseudo:pseudoGiven , isAdmin:false , "bots":bots});
+	}else{
+		res.render('inscription',{pseudoAlreadyTaken:true});
+	}
   }
 );
 
@@ -74,7 +97,7 @@ app.post('/connexion', async function(req, res){
 	var mdpGiven=data.mdp;
 
 	//fetch request
-	await fetch('http://localhost:3000/connexion', 
+	const response = await fetch('http://localhost:3000/connexion', 
 		{
 			//mode: 'no-cors',
 			method:"POST",
@@ -86,21 +109,44 @@ app.post('/connexion', async function(req, res){
 		})
 		//traitement de la réponse
 		.then(response => response.json())//pay attention not using res twice 
-		.then(response => {
-			console.log(`connexion au user : ${JSON.stringify(req.body.pseudo)} : ${response.status}`);
-			if(response.status=="ok"){
-				//passer le user en paramètre : session ou paramètre ejs ou paramètre get
-				//req.session.pseudo = req.body.pseudo;//stockage pseudo user dans session
-				//res.redirect('discuss',{"pseudo":req.body.pseudo});
-				//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
-				res.render(`chat`,{pseudo:pseudoGiven , isAdmin:response.isAdmin});
-			}else{
-				res.render('connexion',{wrongId:true});
-			}
-		})
 		.catch((err)=>{
               console.log(`(error) connexion au user : ${JSON.stringify(req.body.pseudo)} : ${response.status}`);
         });
+        console.log(`connexion au user : ${JSON.stringify(req.body.pseudo)} : ${response.status}`);
+	if(response.status=="ok"){
+		//passer le user en paramètre : session ou paramètre ejs ou paramètre get
+		//req.session.pseudo = req.body.pseudo;//stockage pseudo user dans session
+		//res.redirect('discuss',{"pseudo":req.body.pseudo});
+		//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
+
+		//récupération des bots
+		let bots;
+		//fetch request
+		await fetch('http://localhost:3000/recupererBots')
+		//traitement de la réponse
+		.then(response => response.json())//pay attention not using res twice 
+		.then(response => {
+			console.log(`recupererBots : ${response.status}`);
+			if(response.status=="ok"){
+				//affichage
+				console.log(`bots :`);
+				for(const bot of response.bots){
+					console.log(`${bot}`);
+				}
+				bots=response.bots;
+			}else{
+				bots=null;
+			}
+			console.log(`${bots}`);
+		})
+		.catch((err)=>{
+	          console.log(`(error) recupererBots : ${response.status}`);
+	    });
+
+		res.render(`chat`,{pseudo:pseudoGiven , isAdmin:response.isAdmin , "bots":bots});
+	}else{
+		res.render('connexion',{wrongId:true});
+	}
   }
 );
 
@@ -183,4 +229,3 @@ app.post('/administration', async function(req,res){
 app.listen(port, (err,data) => {
     console.log(`Client server listening on port ${port}`);
 });
-

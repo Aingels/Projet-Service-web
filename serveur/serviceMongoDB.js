@@ -91,7 +91,7 @@ class ServiceMongoDB {
 			collection.insertOne(bot)
 				.then((result) => {
 					if (result != null) {
-						console.log(`MongoDB > addBot : ${botName} , ${port}`);
+						console.log(`MongoDB > addBot : ${botName} , ${port} , ${brain}`);
 						client.close();
 					} else {
 						console.log('MongoDB > addBot : error');
