@@ -1,6 +1,6 @@
 // Collapsible
 var coll = document.getElementsByClassName("collapsible");
-
+let currentPort = -1;
 $( document ).ready(function() {
     firstBotMessage();
 });
@@ -64,6 +64,11 @@ function getHardResponse(userText) {
     document.getElementById("chat-bar-bottom").scrollIntoView(true);
 }
 
+async function chooseBot(port){
+    console.log("Connected to bot which port is : ",port);
+    currentPort = port;
+}
+
 //Gets the text text from the input box and processes it
 async function getResponse() {
     let message = $("#textInput").val();
@@ -86,7 +91,7 @@ async function getResponse() {
         body : JSON.stringify(corp)
     }
 
-    const response = await fetch('http://localhost:3000/reply', param);
+    const response = await fetch('http://localhost:'+currentPort+'/reply', param);
     const json = await response.json();
     botResponse = json.reply;
 

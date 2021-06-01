@@ -23,8 +23,8 @@ app.use(bodyParser.json());
 app.post('/creerBot', cors(corsOptions), addNewBot);
 app.post('/inscription', cors(corsOptions), inscription);
 app.post('/connexion', cors(corsOptions), connexion);
-app.get('/bots',getBots);
-app.get('/recupererCerveaux',recupererCerveaux);
+app.get('/bots', getBots);
+app.get('/recupererCerveaux', recupererCerveaux);
 
 
 //MongoDB (persistance de données)
@@ -37,11 +37,12 @@ ServiceMongoDB.create().then(mDBInst => {// ts est le retour du constructeur
   app.listen(3000, () => {
     console.log(`Server listening on http://localhost:3000`);
   });
+  launchExistingBots();
 });
 
-function launchBotsServers(){
+function launchBotsServers() {
   mongoDBInstance.collection("Bots").find("SELECT * FROM Bots").each(element => {
-    createBot(port,req,res);
+    createBot(port, req, res);
   });
 }
 
@@ -113,67 +114,113 @@ async function connexion(req, res) {
     });
 };
 
-async function addNewBot(req,res){
+async function addNewBot(req, res) {
   //ajouter le bot dans la base de données et détermination d'un port disponible
-  const port = await mongoDBInstance.addBot(req.body.botName)
-    .catch((err)=>{
-          console.log(`(error) addNewBot : ${response.status}`);
+  const port = await mongoDBInstance.addBot(req.body.botName, req.body.cerveau)
+    .catch((err) => {
+      console.log(`(error) addNewBot : ${response.status}`);
     });
 
-  if(port==null){
+  if (port == null) {
     console.log("Index > error > nom de bot déjà pris");
     res.status(500).json({
-      "status":"nom de bot déjà pris",
-      "cerveaux": ["standard","firstbot"],
+      "status": "nom de bot déjà pris",
+      "cerveaux": ["standard", "firstbot"],
     })
-  }else{
+  } else {
     //créer nouveau bot
-    createBot(port,req,res);
+    createBot(port, req, res);
   }
 }
 
-async function getBots(req,res){
+async function getBots(req, res) {
   const botlist = await mongoDBInstance.getBots();
   res.json(botlist);
 }
 
+async function launchExistingBots() {
+  const botlist = await mongoDBInstance.getBots();
+  botlist.forEach(element => {
+    if (element.cerveau != undefined) {
+      createBotAtLauch(element.port, element.cerveau, element.botName);
+    }
+
+  });
+}
+
 //----------------------fonctions de création de serveurs pour les bots------------------
 
-async function createBot(port,req,res) {
+async function createBot(port, req, res) {
   console.log(`post /create`)
   console.log(`nom (formulaire) : ${req.body.botName}`)
 
   //rivescript
   let bot = await new RiveScript({
-      utf8: true, errors: {
-          replyNotFound: "I don't know how to reply to that (´ー｀)."
-      }
+    utf8: true, errors: {
+      replyNotFound: "I don't know how to reply to that (´ー｀)."
+    }
   });
-  
+
   //implémentation des ponctuations
   bot.unicodePunctuation = new RegExp(/[.,!?;:]/g);
   bot.sortReplies();
   try {
-      bot.loadFile(`brain/${req.body.cerveau}.rive`);
+    bot.loadFile(`brain/${req.body.cerveau}.rive`);
   } catch (err) {
-      console.log("Error loading batch #" + loadcount + ": " + err + "\n");
-      return res.status(500)
+    console.log("Error loading batch #" + loadcount + ": " + err + "\n");
+    return res.status(500)
   }
 
-  
+
 
   //création d'un serveur pour le nouveau robot conversationnel
-  const app = createRivescriptServer(bot, port); 
+  const app = createRivescriptServer(bot, port);
   app.listen(port);
+
   res.status(200).json({
-    "status":"bot created",
-    "botName":req.body.botName,
-    "botCerveau":req.body.cerveau,
-    "botPort":port,
+    "status": "bot created",
+    "botName": req.body.botName,
+    "botCerveau": req.body.cerveau,
+    "botPort": port,
   })
-  console.log("New bot is listening to port:",port);
+
+
+  console.log("New bot is listening to port:", port);
 
   return res;
+}
+
+//création des bots au lancement du serveur
+async function createBotAtLauch(port, cerveau, botName) {
+  console.log(`nom (formulaire) : ${botName} port :` + port)
+
+  //rivescript
+  let bot = await new RiveScript({
+    utf8: true, errors: {
+      replyNotFound: "I don't know how to reply to that (´ー｀)."
+    }
+  });
+
+  //implémentation des ponctuations
+  bot.unicodePunctuation = new RegExp(/[.,!?;:]/g);
+  bot.sortReplies();
+  try {
+    bot.loadFile(`brain/${cerveau}.rive`);
+  } catch (err) {
+    console.log("Error loading batch #" + loadcount + ": " + err + "\n");
+    return res.status(500)
+  }
+
+
+
+  //création d'un serveur pour le nouveau robot conversationnel
+  const app = createRivescriptServer(bot, port);
+  app.listen(port);
+
+
+  console.log("New bot is listening to port:", port);
+
+
 }
 
 function createRivescriptServer(bot, port) {
@@ -185,9 +232,9 @@ function createRivescriptServer(bot, port) {
   //CORS
   app.use(cors()); //Cross-origin resource sharing (requêtes multi origines - client ou serveur)
   var corsOptions = {
-      origin: 'http://localhost:' + port,//URL
-      methods: 'GET,POST,PUT,DELETE',
-      optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+    origin: 'http://localhost:' + port,//URL
+    methods: 'GET,POST,PUT,DELETE',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
   };
 
   //prise en charge format JSON (formulaire)
@@ -195,23 +242,23 @@ function createRivescriptServer(bot, port) {
   app.use(bodyParser.json());
 
   // Set up routes.
-  app.post("/reply", (req,res)=>{
-    getReply(bot,req,res);
+  app.post("/reply", (req, res) => {
+    getReply(bot, req, res);
   });
 
   //erreur URL
   app.use(function (req, res, next) {
-      res.setHeader('Content-Type', 'text/plain');
-      res.send(404, 'Page introuvable !');
+    res.setHeader('Content-Type', 'text/plain');
+    res.send(404, 'Page introuvable !');
   });
 
   // Error handling middleware.
   app.use((err, req, res, next) => {
-      const isDev = process.env.NODE_ENV === 'development'; //sécurité pour ne pas dévoiler les failles à un utilisateur
-      res.status(500).json({
-          "status": "error",
-          "error": isDev ? err : "Unknown error",
-      });
+    const isDev = process.env.NODE_ENV === 'development'; //sécurité pour ne pas dévoiler les failles à un utilisateur
+    res.status(500).json({
+      "status": "error",
+      "error": isDev ? err : "Unknown error",
+    });
   });
 
   return app;
@@ -219,7 +266,7 @@ function createRivescriptServer(bot, port) {
 
 
 // POST to /reply to get a RiveScript reply.
-function getReply(bot,req,res) {
+function getReply(bot, req, res) {
   // récupérer les données du post format JSON.
   var username = req.body.username;
   var message = req.body.message;
@@ -267,14 +314,15 @@ function getReply(bot,req,res) {
 }
 
 async function recupererCerveaux(req, res) {
-  
+  /*
   const bots  = await mongoDBInstance.getBots();
   console.log(`get bots`,bots);
+  */
   //envoyer la réponse
   res.status(200).json({
-      "status": "ok",
-      "cerveaux": ["standard","firstbot"],
+    "status": "ok",
+    "cerveaux": ["standard", "firstbot"],
   });
 };
-  
+
 

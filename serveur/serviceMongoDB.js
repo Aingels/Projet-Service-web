@@ -64,7 +64,7 @@ class ServiceMongoDB {
 			});
 	}
 
-	async addBot(botName) {
+	async addBot(botName,brain) {
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");
 		var collection = db.collection("Bots");
@@ -87,7 +87,7 @@ class ServiceMongoDB {
 				port = parseInt(Math.random() * (3100 - 3002) + 3002);
 				portAlreadyTaken = await collection.findOne({ port: port });
 			}
-			const bot = { botName: botName, port: port }
+			const bot = { botName: botName, port: port, brain:brain }
 			collection.insertOne(bot)
 				.then((result) => {
 					if (result != null) {
