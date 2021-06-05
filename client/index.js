@@ -4,6 +4,8 @@ const port = 3001;
 var bodyParser = require('body-parser');
 var fetch = require("node-fetch");
 var session = require('express-session');//session
+const Discord = require('discord.js');//discord
+const dotenv = require('dotenv').config();
 
 app.set('view engine', 'ejs');
 
@@ -15,6 +17,19 @@ app.use(bodyParser.json());
 //session
 app.use(session({secret: "shhh"}));
 var sess;
+
+//discord
+const clientDiscord = new Discord.Client();
+clientDiscord.once('ready', () => {
+	console.log('Ready!');
+});
+clientDiscord.login(process.env.TOKEN);
+clientDiscord.on('message', message => {
+	if (message.content === '!ping') {
+		// send back "Pong." to the channel the message was sent in
+		message.channel.send('Pong.');
+	}
+});
 
 //default url
 app.get('/', function(req, res){
@@ -127,7 +142,6 @@ app.post('/connexion', async function(req, res){
 		//session
 		sess=req.session;
 	    sess.pseudo=pseudoGiven;	
-	    console.log(sess.pseudo);
 
 		//récupération des bots
 		let bots;
@@ -170,10 +184,6 @@ app.get("/chat",(req,res)=> {
 //création d'un bot
 app.get('/creerBot', async function(req, res){
 	console.log("get /creerBot")
-
-	//session
-	sess=req.session;
-    console.log(sess.pseudo);
 
 	console.log("recupererCerveaux");
 
