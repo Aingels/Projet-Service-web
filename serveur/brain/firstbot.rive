@@ -77,6 +77,25 @@
 + why did you say that
 - I said, "<reply>", because you said, "<input>".
 
++ [*] (color|colors) [*]
+* <get favcolor> == undefined => Talking about colors witch one is your favorite ? 
+
++ what is my favorite color
+* <get favcolor> == undefined => You never told me your favorite color ! What is it ?
+- It's <get favcolor> !
+
++ [*] * [*] 
+% talking about colors witch one is your favorite
+-<set favcolor=<star1>> I will remember that -□O !
+
++ [*] * [*] 
+% you never told me your favorite color what is it 
+-<set favcolor=<star1>> I will remember that -□O !
+
+
+
+
+
 // Substitutions
 ! sub i'm     = i am
 ! sub i'd     = i would
