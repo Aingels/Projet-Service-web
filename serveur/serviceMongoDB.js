@@ -63,6 +63,7 @@ class ServiceMongoDB {
 			});
 	}
 
+	//todo : vérif droit admin
 	async addBot(botName,brain) {
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");

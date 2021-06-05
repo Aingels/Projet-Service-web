@@ -4,7 +4,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 const RiveScript = require('rivescript');
-
+var session = require('express-session');//session
 
 var app = express();
 
