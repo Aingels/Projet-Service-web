@@ -185,6 +185,10 @@ async function setFavoriteColor(req, res) {
     });
 };
 
+async function getFavColor(req,res){
+  return await mongoDBInstance.getFavColor(req.body.pseudo);
+}
+
 //----------------------fonctions de création de serveurs pour les bots------------------
 
 async function createBot(port, req, res) {
