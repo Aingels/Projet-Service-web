@@ -148,6 +148,12 @@ class ServiceMongoDB {
 	      }
 	}
 
+	async getFavColor(pseudo){
+		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
+		var db = client.db("TPNodejs");
+		return await db.collection("Bots").findOne({ pseudo: pseudo }).favoriteColor.toString();
+	}
+
 	/*sans vérification connexion
 		async setFavoriteColor(pseudoGiven, mdpGiven, color) {
 			const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });

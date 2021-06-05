@@ -72,8 +72,9 @@ async function chooseBot(port){
 //Gets the text text from the input box and processes it
 async function getResponse() {
     let message = $("#textInput").val();
+    //todo definie username et vars en fonction de l'utilisateur
     let username = "men";
-    let vars = undefined;
+    let vars = undefined; //fetch
     let corp = {
         message ,
         username ,
