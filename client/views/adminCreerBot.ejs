@@ -3,6 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
+    <link rel="stylesheet" href="css/formulaire.css" type="text/css">
 
     <title>Interface d'administration - création d'un bot</title>
 
@@ -10,34 +11,34 @@
   </head>
   <body>
 
-    <div class="jumbotron">
+    <div id="container">
+      <div class="jumbotron">
 
-      <h1>Creation bot</h1>
+        <h1>Creation bot</h1>
 
-      <form action="administration" method="POST">
-        <label>Nom : </label>
-        <input type="text" name="botName"/> <br>
+        <form action="creerBot" method="POST">
+          <label>Nom : </label>
+          <input type="text" name="botName"/> <br>
 
-        <% if (locals.nomPris) { %>
-          <label>Ce nom est déjà pris, merci de faire preuve de plus de créativité.</label>
-        <% } %>
+          <% if (locals.nomPris) { %>
+            <label>Ce nom est déjà pris, merci de faire preuve de plus de créativité.</label>
+          <% } %>
 
-        <h1>Choix du cerveau</h1>
+          <h2>Choix du cerveau</h2>
 
-        <label>Veuillez selectionner un cerveau parmis ceux disponible :</label>
+          <label>Veuillez selectionner un cerveau parmis ceux disponible :</label>
 
-        <select name="cerveau">
-          <% cerveaux.forEach(function(cerveau){ %>
-            <option><%= cerveau %></option>
-          <% }); %>
-        </select>
-        <br><br>
-        <input type="submit" value="Submit">
-      </form>
+          <select name="cerveau">
+            <% cerveaux.forEach(function(cerveau){ %>
+              <option><%= cerveau %></option>
+            <% }); %>
+          </select>
+          <br><br>
+          <input type="submit" value="Envoyer">
+        </form>
 
+      </div>
     </div>
-
-
 
   </body>
   <script></script>

@@ -23,7 +23,7 @@ const clientDiscord = new Discord.Client();
 clientDiscord.once('ready', () => {
 	console.log('Ready!');
 });
-clientDiscord.login(process.env.TOKEN);
+clientDiscord.login(process.env.TOKEN);//token du bot stocké dans .env
 clientDiscord.on('message', message => {
 	if (message.content === '!ping') {
 		// send back "Pong." to the channel the message was sent in

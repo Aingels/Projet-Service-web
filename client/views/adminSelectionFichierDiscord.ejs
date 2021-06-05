@@ -3,6 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="utf-8">
+    <link rel="stylesheet" href="css/formulaire.css" type="text/css">
 
     <title>Interface d'administration - séléction fichier paramètres discord</title>
 
@@ -10,22 +11,21 @@
   </head>
   <body>
 
-    <div class="jumbotron">
+    <div id="container">
+      <div class="jumbotron">
 
-      <h1>Séléction fichier de paramètres de connexion à discord</h1>
+        <h2>Sélection fichier de paramètres de connexion à discord</h2>
 
-      <form action="administration" method="POST">
-        <label>Veuillez sélectionner un fichier de paramètres de connexion à discord dans vos fichiers locaux</label><br>
-        <label>Fichier : </label>
-        <input type="file" id="input" name="fichierDiscord"><br>
+        <form action="administration" method="POST">
+          <label>Veuillez sélectionner un fichier de paramètres de connexion à discord dans vos fichiers locaux</label><br>
+          <label>Fichier : </label>
+          <input type="file" id="input" name="fichierDiscord"><br>
 
-        <input type="submit" value="Submit">
-      </form>
+          <input type="submit" value="Envoyer">
+        </form>
 
+      </div>
     </div>
-
-
-
   </body>
   <script></script>
 

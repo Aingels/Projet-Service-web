@@ -27,7 +27,6 @@ app.get('/bots', getBots);
 app.get('/recupererCerveaux', recupererCerveaux);
 app.get('/recupererBots', recupererBots);
 app.post('/setFavoriteColor', cors(corsOptions), setFavoriteColor);
-app.get('/getFavoriteColor', cors(corsOptions), setFavColor)
 
 //MongoDB (persistance de données)
 const mongodb = require("mongodb");

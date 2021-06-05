@@ -10,7 +10,7 @@
     <base href='/'>
     <link rel="stylesheet" href="css/home.css" type="text/css">
     <link rel="stylesheet" href="css/chat.css" type="text/css">
-    <link rel="stylesheet" href="css/selectionBot.css" type="text/css">
+    <link rel="stylesheet" href="css/formulaire.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -62,17 +62,23 @@
         </div>
         
         <!-- select a bot -->  
-        <div class="selectionBot">       
-            <h1>Veuillez selectionner un bot parmis ceux disponible :</h1> 
+        <div class="selectionBot">
+            <div class="selectionBotInside">
+                <form>
 
-            <select name="bot" id="selectionBot"> 
-                <% bots.forEach(function(bot){ %>
-                    <option value="<%= bot[1] %>"><%= bot[0] %></option>
-                <% }); %>
-            </select> 
+                    <h2>Veuillez selectionner un bot parmis ceux disponible :</h2> 
 
-            <i id="chat-icon" style="color: #0;" class="fa fa-fw fa-send"
-                                    onclick="chooseBot(document.getElementById('selectionBot').value);"></i> 
+                    <select name="bot" id="selectionBot"> 
+                        <% bots.forEach(function(bot){ %>
+                            <option value="<%= bot[1] %>"><%= bot[0] %></option>
+                        <% }); %>
+                    </select> 
+
+                    <i id="chat-icon" style="color: #0;" class="fa fa-fw fa-send"
+                                            onclick="chooseBot(document.getElementById('selectionBot').value);"></i> 
+                                        
+                </form>
+            </div>                      
         </div>     
 
     </body>
