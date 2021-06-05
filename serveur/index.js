@@ -142,8 +142,9 @@ async function getBots(req, res) {
 async function launchExistingBots() {
   const botlist = await mongoDBInstance.getBots();
   botlist.forEach(element => {
-    if (element.cerveau != undefined) {
-      createBotAtLauch(element.port, element.cerveau, element.botName);
+    if (element.brain != undefined) {
+      console.log('bot launched')
+      createBotAtLauch(element.port, element.brain, element.botName);
     }
 
   });
@@ -164,15 +165,15 @@ async function createBot(port, req, res) {
 
   //implémentation des ponctuations
   bot.unicodePunctuation = new RegExp(/[.,!?;:]/g);
-  bot.sortReplies();
+  
   try {
-    bot.loadFile(`brain/${req.body.cerveau}.rive`);
+    await bot.loadFile(`brain/${req.body.cerveau}.rive`);
   } catch (err) {
     console.log("Error loading batch #" + loadcount + ": " + err + "\n");
     return res.status(500)
   }
 
-
+  bot.sortReplies();
 
   //création d'un serveur pour le nouveau robot conversationnel
   const app = createRivescriptServer(bot, port);
@@ -204,15 +205,15 @@ async function createBotAtLauch(port, cerveau, botName) {
 
   //implémentation des ponctuations
   bot.unicodePunctuation = new RegExp(/[.,!?;:]/g);
-  bot.sortReplies();
+  
   try {
-    bot.loadFile(`brain/${cerveau}.rive`);
+    await bot.loadFile(`brain/${cerveau}.rive`);
   } catch (err) {
     console.log("Error loading batch #" + loadcount + ": " + err + "\n");
     return res.status(500)
   }
 
-
+  bot.sortReplies();
 
   //création d'un serveur pour le nouveau robot conversationnel
   const app = createRivescriptServer(bot, port);
@@ -267,7 +268,7 @@ function createRivescriptServer(bot, port) {
 
 
 // POST to /reply to get a RiveScript reply.
-function getReply(bot, req, res) {
+async function getReply(bot, req, res) {
   // récupérer les données du post format JSON.
   var username = req.body.username;
   var message = req.body.message;
@@ -305,12 +306,18 @@ function getReply(bot, req, res) {
   //     "error": err
   //   });
   // });
+  
+  let reply = await bot.reply(username, message, this).catch(err=>{
+    reply = "I ran into an error (╯`□`）╯︵ ┻━┻";
+    console.log(err);
+  });
 
-  const reply = bot.reply(username, message, this);
   vars = bot.getUservars(username);
 
   res.status(200).json({
     "status": "ok",
+    "reply":reply,
+    "vars":vars
   });
 }
 
