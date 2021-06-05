@@ -3,6 +3,7 @@ const app = express();
 const port = 3001;
 var bodyParser = require('body-parser');
 var fetch = require("node-fetch");
+var session = require('express-session');//session
 
 app.set('view engine', 'ejs');
 
@@ -10,6 +11,10 @@ app.use(express.static(__dirname+'/public')); // to get static pages
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+//session
+app.use(session({secret: "shhh"}));
+var sess;
 
 //default url
 app.get('/', function(req, res){
@@ -119,6 +124,11 @@ app.post('/connexion', async function(req, res){
 		//res.redirect('discuss',{"pseudo":req.body.pseudo});
 		//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
 
+		//session
+		sess=req.session;
+	    sess.pseudo=pseudoGiven;	
+	    console.log(sess.pseudo);
+
 		//récupération des bots
 		let bots;
 		//fetch request
@@ -152,13 +162,18 @@ app.post('/connexion', async function(req, res){
 
 app.get("/chat",(req,res)=> {
 	console.log("get /chat")
+
 	let port = req.query.port;
 	res.render("chat");
 })
 
 //création d'un bot
-app.get('/administration', async function(req, res){
-	console.log("get /administration")
+app.get('/creerBot', async function(req, res){
+	console.log("get /creerBot")
+
+	//session
+	sess=req.session;
+    console.log(sess.pseudo);
 
 	console.log("recupererCerveaux");
 
@@ -184,8 +199,10 @@ app.get('/administration', async function(req, res){
   }
 );
 
-app.post('/administration', async function(req,res){
-	console.log("post /administration");
+//---------------------- partie administration ------------------------------------
+
+app.post('/creerBot', async function(req,res){
+	console.log("post /creerBot");
 	var data=req.body;
 
 	//fetch
@@ -203,7 +220,7 @@ app.post('/administration', async function(req,res){
 		.catch((err)=>{
             console.log(`(error) creerBot : ${response.status}`);
         });	
-    console.log(`post administration : tentative de creation bot : ${JSON.stringify(response.status)}`);
+    console.log(`post creerBot : tentative de creation bot : ${JSON.stringify(response.status)}`);
 	if(response.status=="bot created"){
 
 		console.log("creation bot suceed");
@@ -244,6 +261,68 @@ app.post('/administration', async function(req,res){
   }
 );
 
+//création d'un bot
+app.get('/selectionFichierDiscord', async function(req, res){
+	console.log("get /selectionFichierDiscord")
+	res.render('adminSelectionFichierDiscord',{});
+  }
+);
+
+app.post('/selectionFichierDiscord', async function(req,res){
+	console.log("post /selectionFichierDiscord");
+	var data=req.body;
+
+	//fetch
+	const response = await fetch('http://localhost:3000/selectionFichierDiscord', 
+		{
+			//mode: 'no-cors',
+			method:"POST",
+		 	headers: {
+		      'Accept': 'application/json',
+		      'Content-Type': 'application/json'
+		    },
+		    body: JSON.stringify(data)
+		})
+		.then(response => response.json())//pay attention not using res twice 
+		.catch((err)=>{
+            console.log(`(error) selectionFichierDiscord : ${response.status}`);
+        });	
+	if(response.status=="ok"){
+		console.log("selectionFichierDiscord suceed");
+
+		//récupération des bots
+		let bots;
+		//fetch request
+		await fetch('http://localhost:3000/recupererBots')
+		//traitement de la réponse
+		.then(response => response.json())//pay attention not using res twice 
+		.then(response => {
+			console.log(`recupererBots : ${response.status}`);
+			if(response.status=="ok"){
+				//affichage
+				/*
+				console.log(`bots :`);
+				for(const bot of response.bots){
+					console.log(`${bot}`);
+				}*/
+				bots=response.bots;
+			}else{
+				bots=null;
+			}
+		})
+		.catch((err)=>{
+	          console.log(`(error) recupererBots : ${response.status}`);
+	    });
+
+	    res.render(`chat`,{'botPort':botPort , "bots":bots});
+	}else{
+		console.log("selectionFichierDiscord failed");		
+		res.render('adminSelectionFichierDiscord',{});
+	}
+  }
+);
+
+/*todo move to chat.js
 app.post('/setFavoriteColor', async function(req, res){
 	console.log(`post setFavoriteColor`);
 
@@ -273,7 +352,8 @@ app.post('/setFavoriteColor', async function(req, res){
 	}
   }
 );
+*/
 
 app.listen(port, (err,data) => {
-    console.log(`Client server listening on port ${port}`);
+	console.log(`Client server listening on port ${port}`);
 });
