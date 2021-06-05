@@ -20,10 +20,6 @@ var corsOptions = {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-//session
-app.use(session({secret: "shhh"}));
-var sess;
-
 app.post('/creerBot', cors(corsOptions), addNewBot);
 app.post('/inscription', cors(corsOptions), inscription);
 app.post('/connexion', cors(corsOptions), connexion);
@@ -100,12 +96,6 @@ async function connexion(req, res) {
     .then((result) => {
       if (result != null) {
         console.log(`index : user found : ${result.pseudo}`);
-
-        //session
-        sess=req.session;
-        sess.pseudo=pseudo;  
-        console.log(sess.pseudo);
-
         res.status(200).json({
           "status": "ok",
           "isAdmin": result.isAdmin,
