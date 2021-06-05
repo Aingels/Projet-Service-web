@@ -26,7 +26,7 @@ app.post('/connexion', cors(corsOptions), connexion);
 app.get('/bots', getBots);
 app.get('/recupererCerveaux', recupererCerveaux);
 app.get('/recupererBots', recupererBots);
-
+app.post('/setFavoriteColor', cors(corsOptions), setFavoriteColor);
 
 //MongoDB (persistance de données)
 const mongodb = require("mongodb");
@@ -149,6 +149,31 @@ async function launchExistingBots() {
 
   });
 }
+
+async function setFavoriteColor(req, res) {
+  console.log(`post setFavoriteColor : ${req.body.color}`);
+  await mongoDBInstance.setFavoriteColor(req.body.pseudo, req.body.mdp, req.body.color)
+    //envoyer la réponse
+    .then((result) => {
+      if (result != null) {
+        console.log(`index : setFavoriteColor ok`);
+        res.status(200).json({
+          "status": "ok",
+        });
+      } else {
+        console.log(`error : index : setFavoriteColor : ${result}`);
+        res.status(500).json({
+          "status": "error",
+        });
+      }
+    })
+    .catch((err) => {
+      console.error(err)
+      res.status(500).json({
+        "status": "error",
+      });
+    });
+};
 
 //----------------------fonctions de création de serveurs pour les bots------------------
 
