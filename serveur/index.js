@@ -27,6 +27,7 @@ app.get('/bots', getBots);
 app.get('/recupererCerveaux', recupererCerveaux);
 app.get('/recupererBots', recupererBots);
 app.post('/setFavoriteColor', cors(corsOptions), setFavoriteColor);
+app.get('/getFavoriteColor', cors(corsOptions), setFavColor)
 
 //MongoDB (persistance de données)
 const mongodb = require("mongodb");
@@ -175,8 +176,15 @@ async function setFavoriteColor(req, res) {
     });
 };
 
-async function getFavColor(req,res){
-  return await mongoDBInstance.getFavColor(req.body.pseudo);
+async function getFavColor(req, res) {
+  const color = await mongoDBInstance.getFavColor(req.body.pseudo);
+
+  res.status(200).json({
+    "status": "ok",
+    "favcolor": color
+  });
+
+
 }
 
 //----------------------fonctions de création de serveurs pour les bots------------------
@@ -194,7 +202,7 @@ async function createBot(port, req, res) {
 
   //implémentation des ponctuations
   bot.unicodePunctuation = new RegExp(/[.,!?;:]/g);
-  
+
   try {
     await bot.loadFile(`brain/${req.body.cerveau}.rive`);
   } catch (err) {
@@ -234,7 +242,7 @@ async function createBotAtLauch(port, cerveau, botName) {
 
   //implémentation des ponctuations
   bot.unicodePunctuation = new RegExp(/[.,!?;:]/g);
-  
+
   try {
     await bot.loadFile(`brain/${cerveau}.rive`);
   } catch (err) {
@@ -335,8 +343,8 @@ async function getReply(bot, req, res) {
   //     "error": err
   //   });
   // });
-  
-  let reply = await bot.reply(username, message, this).catch(err=>{
+
+  let reply = await bot.reply(username, message, this).catch(err => {
     reply = "I ran into an error (╯`□`）╯︵ ┻━┻";
     console.log(err);
   });
@@ -345,8 +353,8 @@ async function getReply(bot, req, res) {
 
   res.status(200).json({
     "status": "ok",
-    "reply":reply,
-    "vars":vars
+    "reply": reply,
+    "vars": vars
   });
 }
 
@@ -363,21 +371,21 @@ async function recupererCerveaux(req, res) {
 };
 
 async function recupererBots(req, res) {
-  const bots  = await mongoDBInstance.getBots();
+  const bots = await mongoDBInstance.getBots();
   console.log(`get bots`);
 
   //mise au bon format
-  let botTab=[];
-  let botTab2=[];
-  bots.forEach(bot => botTab.push( { bot } ) );
-  for (i = 0; i < botTab.length; i++) { 
-    botTab2[i] = [ botTab[i].bot.botName , botTab[i].bot.port , botTab[i].bot.brain ];
+  let botTab = [];
+  let botTab2 = [];
+  bots.forEach(bot => botTab.push({ bot }));
+  for (i = 0; i < botTab.length; i++) {
+    botTab2[i] = [botTab[i].bot.botName, botTab[i].bot.port, botTab[i].bot.brain];
   }
   //console.log(`recupererBots renvoie : `,botTab2);
 
   //envoyer la réponse
   res.status(200).json({
-      "status": "ok",
-      "bots": botTab2,
+    "status": "ok",
+    "bots": botTab2,
   });
 };

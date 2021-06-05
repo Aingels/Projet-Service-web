@@ -74,7 +74,9 @@ async function getResponse() {
     let message = $("#textInput").val();
     //todo definie username et vars en fonction de l'utilisateur
     let username = "men";
-    let vars = undefined; //fetch
+
+    const getColor = await fetch('http://localhost:'+currentPort+'/getFavoriteColor');
+    let vars = {"favcolor":getColor}; //fetch
     let corp = {
         message ,
         username ,
