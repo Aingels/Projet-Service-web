@@ -156,12 +156,6 @@ app.get("/chat",(req,res)=> {
 	res.render("chat");
 })
 
-//discussion avec le bot sur un nouveau port
-app.post("/chat",(req,res)=> {
-	console.log("post /chat")
-	//todo : discussion avec le bot sur un nouveau port
-})
-
 //création d'un bot
 app.get('/administration', async function(req, res){
 	console.log("get /administration")
@@ -246,6 +240,36 @@ app.post('/administration', async function(req,res){
 	}else{
 		console.log("creation bot failed (nom de bot déjà pris)");		
 		res.render('adminCreerBot',{"nomPris":true,"cerveaux":response.cerveaux});
+	}
+  }
+);
+
+app.post('/setFavoriteColor', async function(req, res){
+	console.log(`post setFavoriteColor`);
+
+	//fetch request
+	const response = await fetch('http://localhost:3000/setFavoriteColor', 
+		{
+			//mode: 'no-cors',
+			method:"POST",
+		 	headers: {
+		      'Accept': 'application/json',
+		      'Content-Type': 'application/json'
+		    },
+		    body: JSON.stringify(req.body)
+		})
+		//traitement de la réponse
+		.then(response => response.json())//pay attention not using res twice 
+		.catch((err)=>{
+              console.log(`(error) setFavoriteColor : ${response.status}`);
+        });
+        console.log(`setFavoriteColor : ${response.status}`);
+	if(response.status=="ok"){
+		//chatbot réponds couleur modifiée
+		console.log("couleur modifiée")
+	}else{
+		//chatbot réponds couleur non modifiée
+		console.log("error : couleur non modifiée")
 	}
   }
 );
