@@ -18,19 +18,6 @@ app.use(bodyParser.json());
 app.use(session({secret: "shhh"}));
 var sess;
 
-//discord
-const clientDiscord = new Discord.Client();
-clientDiscord.once('ready', () => {
-	console.log('Ready!');
-});
-clientDiscord.login(process.env.TOKEN);//token du bot stocké dans .env
-clientDiscord.on('message', message => {
-	if (message.content === '!ping') {
-		// send back "Pong." to the channel the message was sent in
-		message.channel.send('Pong.');
-	}
-});
-
 //default url
 app.get('/', function(req, res){
     console.log("get /")
@@ -181,6 +168,15 @@ app.get("/chat",(req,res)=> {
 	res.render("chat");
 })
 
+//---------------------- partie administration ------------------------------------
+
+//création d'un bot
+app.get('/adminAccueil', async function(req, res){
+	console.log("get /adminAccueil")
+	res.render('adminAccueil',{});
+  }
+);
+
 //création d'un bot
 app.get('/creerBot', async function(req, res){
 	console.log("get /creerBot")
@@ -208,8 +204,6 @@ app.get('/creerBot', async function(req, res){
         });    
   }
 );
-
-//---------------------- partie administration ------------------------------------
 
 app.post('/creerBot', async function(req,res){
 	console.log("post /creerBot");
@@ -272,63 +266,89 @@ app.post('/creerBot', async function(req,res){
 );
 
 //création d'un bot
-app.get('/selectionFichierDiscord', async function(req, res){
-	console.log("get /selectionFichierDiscord")
-	res.render('adminSelectionFichierDiscord',{});
+app.get('/associationBotDiscord', async function(req, res){
+	console.log("get /associationBotDiscord")
+
+	//récupération des bots
+	let bots;
+	//fetch request
+	await fetch('http://localhost:3000/recupererBots')
+	//traitement de la réponse
+	.then(response => response.json())//pay attention not using res twice 
+	.then(response => {
+		console.log(`recupererBots : ${response.status}`);
+		if(response.status=="ok"){
+			//affichage
+			/*
+			console.log(`bots :`);
+			for(const bot of response.bots){
+				console.log(`${bot}`);
+			}*/
+			bots=response.bots;
+		}else{
+			bots=null;
+		}
+	})
+	.catch((err)=>{
+          console.log(`(error) recupererBots : ${response.status}`);
+    });
+
+	res.render('adminAssociationBotDiscord',{'botPort':-1 , "bots":bots});
   }
 );
 
-app.post('/selectionFichierDiscord', async function(req,res){
-	console.log("post /selectionFichierDiscord");
+
+
+app.post('/associationBotDiscord', async function(req,res){
+	console.log("post /associationBotDiscord");
 	var data=req.body;
 
-	//fetch
-	const response = await fetch('http://localhost:3000/selectionFichierDiscord', 
-		{
-			//mode: 'no-cors',
-			method:"POST",
-		 	headers: {
-		      'Accept': 'application/json',
-		      'Content-Type': 'application/json'
-		    },
-		    body: JSON.stringify(data)
-		})
-		.then(response => response.json())//pay attention not using res twice 
-		.catch((err)=>{
-            console.log(`(error) selectionFichierDiscord : ${response.status}`);
-        });	
-	if(response.status=="ok"){
-		console.log("selectionFichierDiscord suceed");
+	console.log(`token : ${req.body.token}`);
+	console.log(`botPort : ${req.body.botPort}`);
+	let botPort=req.body.botPort;
+	let token=req.body.token;
+	//récupération du bot rivescript
 
-		//récupération des bots
-		let bots;
-		//fetch request
-		await fetch('http://localhost:3000/recupererBots')
-		//traitement de la réponse
-		.then(response => response.json())//pay attention not using res twice 
-		.then(response => {
-			console.log(`recupererBots : ${response.status}`);
-			if(response.status=="ok"){
-				//affichage
-				/*
-				console.log(`bots :`);
-				for(const bot of response.bots){
-					console.log(`${bot}`);
-				}*/
-				bots=response.bots;
-			}else{
-				bots=null;
-			}
-		})
-		.catch((err)=>{
-	          console.log(`(error) recupererBots : ${response.status}`);
-	    });
+	//discord
+	const clientDiscord = new Discord.Client();
+	clientDiscord.once('ready', () => {
+		console.log('Ready!');
+	});
+	clientDiscord.login(token);//token du bot discord
+	clientDiscord.on('message', message => {
+		if (message.content === '!ping') {
+			// send back "Pong." to the channel the message was sent in
+			message.channel.send('Pong.');
+		}
+		//todo : associer cerveau bot discord au cerveau du bot rivescript
+	});
 
-	    res.render(`chat`,{'botPort':botPort , "bots":bots});
-	}else{
-		console.log("selectionFichierDiscord failed");		
-		res.render('adminSelectionFichierDiscord',{});
-	}
+	//récupération des bots
+	let bots;
+	//fetch request
+	await fetch('http://localhost:3000/recupererBots')
+	//traitement de la réponse
+	.then(response => response.json())//pay attention not using res twice 
+	.then(response => {
+		console.log(`recupererBots : ${response.status}`);
+		if(response.status=="ok"){
+			//affichage
+			/*
+			console.log(`bots :`);
+			for(const bot of response.bots){
+				console.log(`${bot}`);
+			}*/
+			bots=response.bots;
+		}else{
+			bots=null;
+		}
+	})
+	.catch((err)=>{
+          console.log(`(error) recupererBots : ${response.status}`);
+    });
+
+    res.render(`chat`,{'botPort':botPort , "bots":bots});
+	
   }
 );
 
