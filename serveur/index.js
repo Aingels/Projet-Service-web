@@ -16,6 +16,27 @@ var corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
+const NODE_ENV = "development"
+
+//paramètres des sessions
+
+//duree du cookie 
+const TWO_HOURS = 100*60*60*2
+
+const IN_PROD = NODE_ENV === "production"
+
+app.use(session({
+  name:"sid",
+  secret:'key',
+  resave: false,
+  saveUninitialized:false,
+  cookie:{
+    maxAge:TWO_HOURS,
+    sameSite:true,
+    secure:IN_PROD
+  }
+}))
+
 //prise en charge format JSON (formulaire)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -27,6 +48,9 @@ app.get('/bots', getBots);
 app.get('/recupererCerveaux', recupererCerveaux);
 app.get('/recupererBots', recupererBots);
 app.post('/setFavoriteColor', cors(corsOptions), setFavoriteColor);
+app.get('/usersession',getUserSession)
+app.post('/getFavoriteColor',getFavColor);
+
 
 //MongoDB (persistance de données)
 const mongodb = require("mongodb");
@@ -96,6 +120,10 @@ async function connexion(req, res) {
     .then((result) => {
       if (result != null) {
         console.log(`index : user found : ${result.pseudo}`);
+        req.session.username = pseudo;
+        console.log("Session save with username :",req.session.username);
+        req.session.favcolor = mongoDBInstance.getFavColor(pseudo);
+        req.session.isAuth =true;
         res.status(200).json({
           "status": "ok",
           "isAdmin": result.isAdmin,
@@ -176,7 +204,13 @@ async function setFavoriteColor(req, res) {
 };
 
 async function getFavColor(req, res) {
-  const color = await mongoDBInstance.getFavColor(req.body.pseudo);
+  console.log(req.body.username);
+  const color = await mongoDBInstance.getFavColor(req.body.username).catch(err=>{
+    console.log(err);
+    res.status(500).json({
+      "status": "problem finding your preferences"
+    })
+  });
 
   res.status(200).json({
     "status": "ok",
@@ -184,6 +218,28 @@ async function getFavColor(req, res) {
   });
 
 
+}
+
+async function getUserSession(req,res) {
+  const username=req.session.username;
+  console.log("Tried to get session username :",req.session.username)
+  const favcolor=req.session.favcolor;
+
+  if (username!=undefined){
+    res.status(200).json({
+      "status":"ok",
+      "username": username,
+      "favcolor": favcolor
+    })
+  } else {
+    console.log("session not defined")
+    res.status(200).json({
+      "status":"sessiono not defined",
+      "username": username,
+      "favcolor": favcolor
+    })
+  }
+  
 }
 
 //----------------------fonctions de création de serveurs pour les bots------------------
@@ -283,7 +339,7 @@ function createRivescriptServer(bot, port) {
   app.post("/reply", (req, res) => {
     getReply(bot, req, res);
   });
-
+  
   //erreur URL
   app.use(function (req, res, next) {
     res.setHeader('Content-Type', 'text/plain');
@@ -311,8 +367,12 @@ async function getReply(bot, req, res) {
   var vars = req.body.vars;
 
   // Make sure username and message are included.
-  if (typeof (username) === "undefined" || typeof (message) === "undefined") {
-    return error(res, "username and message are required keys");
+  if (typeof (username) === "undefined" ) {
+    username="men";
+  }
+
+  if ( typeof (message) === "undefined") {
+    message="empty";
   }
 
   // Copy any user vars from the post into RiveScript.
@@ -344,7 +404,12 @@ async function getReply(bot, req, res) {
   // });
 
   let reply = await bot.reply(username, message, this).catch(err => {
-    reply = "I ran into an error (╯`□`）╯︵ ┻━┻";
+    res.status(200).json({
+      "status":"error",
+      "reply":"I ran into an error (╯`□`）╯︵ ┻━┻",
+      "vars": bot.getUservars(username)
+    })
+    
     console.log(err);
   });
 

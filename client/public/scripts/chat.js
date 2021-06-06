@@ -69,15 +69,38 @@ async function chooseBot(port){
     currentPort = port;
 }
 
+
+
 //Gets the text text from the input box and processes it
 async function getResponse() {
     let message = $("#textInput").val();
     //todo definie username et vars en fonction de l'utilisateur
-    let username = "men";
+    
+    let userSessionInfos = await fetch('http://localhost:3000/usersession').catch(err => console.log(err));
+    const jsonuser = await userSessionInfos.json();
+    const username = jsonuser.username;
+    let favcolor = jsonuser.favcolor;
 
-    const getColor = await fetch('http://localhost:'+currentPort+'/getFavoriteColor');
-    let vars = {"favcolor":getColor}; //fetch
-    let corp = {
+    console.log(username);
+    
+
+    let corp = {       
+        username       
+    }
+
+    let param = {
+        method : 'post',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+        body : JSON.stringify(corp)
+    }
+
+    const getColor = await fetch('http://localhost:3000/getFavoriteColor',param).catch(err => console.log(err));
+    let vars = {"favcolor":favcolor}; //fetch
+
+    corp = {
         message ,
         username ,
         vars
@@ -85,7 +108,7 @@ async function getResponse() {
     
 
 
-    let param = {
+    param = {
         method : 'post',
         headers: {
             'Accept': 'application/json',

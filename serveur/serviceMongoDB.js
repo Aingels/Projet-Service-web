@@ -150,9 +150,15 @@ class ServiceMongoDB {
 	}
 
 	async getFavColor(pseudo){
+		console.log(pseudo);
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");
-		return await db.collection("Bots").findOne({ pseudo: pseudo }).favoriteColor.toString();
+		try {
+			return await db.collection("Bots").findOne({ pseudo: pseudo }).favoriteColor.toString();
+		} catch (err){
+			console.log("User hasn't benn found in the database.");
+			return undefined;
+		}	
 	}
 
 	/*sans vérification connexion

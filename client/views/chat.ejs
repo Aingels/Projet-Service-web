@@ -12,77 +12,84 @@
     <link rel="stylesheet" href="css/chat.css" type="text/css">
     <link rel="stylesheet" href="css/formulaire.css" type="text/css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-   
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="scripts/chat.js"></script>
-    </head>
-    <body onload="chooseBot(<%= botPort %>)">
-        <% if (locals.isAdmin) {%>
-          <% if (isAdmin) {%>
-              <a href="creerBot">Interface d'administration</a><br>
-          <% } %>
-        <% } %>
-        <!-- chat box -->
-        <div class="chat">
-            <!-- label -->
-            <div class="chat-label-container">
-                <p>I'm here! Chat with me OwO!</p>
-            </div>
-            <!--Content-->
-            <div class="content">
-                <div class="full-chat-block">
-                    <!--Messages History-->
-                    <div class="outer-container">
-                        <div class="chat-container">
-                            <!--Messages-->
-                            <div id="chatbox">
-                                <h5 id="time"></h5>
-                                <p id="botFirstMessage" class="botText"><span>Loading...</span></p>
+</head>
+
+<body onload="chooseBot(<%= botPort %>)">
+    <% if (locals.isAdmin) {%>
+        <% if (isAdmin) {%>
+            <a href="creerBot">Interface d'administration</a><br>
+            <% } %>
+                <% } %>
+                    <!--body container-->
+                    <div class="bodyContainer">
+                        <!-- chat box -->
+                        <div class="chat">
+                            <!-- label -->
+                            <div class="chat-label-container">
+                                <p>I'm here! Chat with me OwO!</p>
                             </div>
-                            <!--Message user input-->
-                            <div class="chat-bar-input-block">
-                                <div id="userInput">
-                                    <input id="textInput" type="text" name="userMessage" placeholder="Enter text here" class="input-box">
-                                    <p></p>
+                            <!--Content-->
+                            <div class="content">
+                                <div class="full-chat-block">
+                                    <!--Messages History-->
+                                    <div class="outer-container">
+                                        <div class="chat-container">
+                                            <!--Messages-->
+                                            <div id="chatbox">
+                                                <h5 id="time"></h5>
+                                                <p id="botFirstMessage" class="botText"><span>Loading...</span></p>
+                                            </div>
+                                            <!--Message user input-->
+                                            <div class="chat-bar-input-block">
+                                                <div id="userInput">
+                                                    <input id="textInput" type="text" name="userMessage"
+                                                        placeholder="Enter text here" class="input-box">
+                                                    <p></p>
+                                                </div>
+                                                <div class="chat-bar-icons">
+
+                                                    <i id="chat-icon" style="color: #333;" class="fa fa-fw fa-send"
+                                                        onclick="sendButton()"></i>
+                                                </div>
+                                            </div>
+                                            <div id="chat-bar-bottom">
+                                                <p></p>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
-                                <div class="chat-bar-icons">
-                                    
-                                    <i id="chat-icon" style="color: #333;" class="fa fa-fw fa-send"
-                                        onclick="sendButton()"></i>
-                                </div>
-                            </div>
-                            <div id="chat-bar-bottom">
-                                <p></p>
                             </div>
                         </div>
-    
+
+                        <!-- select a bot -->
+                        <div class="selectionBot">
+                            <div class="selectionBotInside">
+                                <form>
+
+                                    <h2>Veuillez selectionner un bot parmis ceux disponible :</h2>
+
+                                    <select name="bot" id="selectionBot">
+                                        <% bots.forEach(function(bot){ %>
+                                            <option value="<%= bot[1] %>">
+                                                <%= bot[0] %>
+                                            </option>
+                                            <% }); %>
+                                    </select>
+
+                                    <i id="chat-icon" style="color: #0;" class="fa fa-fw fa-send"
+                                        onclick="chooseBot(document.getElementById('selectionBot').value);"></i>
+
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- select a bot -->  
-        <div class="selectionBot">
-            <div class="selectionBotInside">
-                <form>
 
-                    <h2>Veuillez selectionner un bot parmis ceux disponible :</h2> 
+</body>
 
-                    <select name="bot" id="selectionBot"> 
-                        <% bots.forEach(function(bot){ %>
-                            <option value="<%= bot[1] %>"><%= bot[0] %></option>
-                        <% }); %>
-                    </select> 
 
-                    <i id="chat-icon" style="color: #0;" class="fa fa-fw fa-send"
-                                            onclick="chooseBot(document.getElementById('selectionBot').value);"></i> 
-                                        
-                </form>
-            </div>                      
-        </div>     
-
-    </body>
-    
-    
 
 </html>

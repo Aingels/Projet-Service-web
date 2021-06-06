@@ -171,10 +171,12 @@
     }
 }
 
+.bodyContainer{
+    display: flex;
+}
 
 .selectionBot{
-    padding-left : 30%;
-    padding-right : 30%;
+   
 }
 
 .selectionBotInside{

@@ -3,7 +3,7 @@ const app = express();
 const port = 3001;
 var bodyParser = require('body-parser');
 var fetch = require("node-fetch");
-var session = require('express-session');//session
+
 const Discord = require('discord.js');//discord
 const dotenv = require('dotenv').config();
 
@@ -14,9 +14,7 @@ app.use(express.static(__dirname+'/public')); // to get static pages
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-//session
-app.use(session({secret: "shhh"}));
-var sess;
+
 
 //discord
 const clientDiscord = new Discord.Client();
@@ -139,10 +137,7 @@ app.post('/connexion', async function(req, res){
 		//res.redirect('discuss',{"pseudo":req.body.pseudo});
 		//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
 
-		//session
-		sess=req.session;
-	    sess.pseudo=pseudoGiven;	
-
+	
 		//récupération des bots
 		let bots;
 		//fetch request
