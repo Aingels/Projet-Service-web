@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/formulaire.css" type="text/css">
+
+    <title>Interface d'administration - séléction fichier paramètres discord</title>
+
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"></link>
+  </head>
+  <body>
+
+    <div id="container">
+      <div class="jumbotron">
+
+        <h2>Association bot - discord</h2>
+
+        <form action="associationBotDiscord" method="POST">
+
+          <label>Veuillez sélectionner un bot</label><br>
+
+           <select name="botPort" id="selectionBot"> 
+                        <% bots.forEach(function(bot){ %>
+                            <option value="<%= bot[1] %>"><%= bot[0] %></option>
+                        <% }); %>
+                    </select> 
+
+          <label>Veuillez indiquer le token de paramètres de connexion à discord du bot à associer</label><br>
+          <input type="text" name="token" required minlength="50" maxlength="70" size="10">
+
+          <input type="submit" value="Envoyer">
+        </form>
+
+      </div>
+    </div>
+  </body>
+  <script></script>
+
+</html>
