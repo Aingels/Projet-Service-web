@@ -22,7 +22,7 @@ Le serveur écoute sur le port `3000` et le client sur `3001`. Tous les bots enr
 ## Première étape :
 Rendez vous sur *localhost:3001* sur cette page vous pourrez vous connecter ou créer un compte puis commencer à utiliser les services.
 
->Note : *session-express a été utilisé pour vérifier que le client c'est bien authentifier avant de parcourir les URL cependant un problème inexpliqué persiste et empêche d'exploiter cette fonctionnalité. Piste : le cookie ne semble pas être envoyé au client bien que express-session doive s'en occuper.*
+>Note : *session-express a été utilisé pour vérifier que le client c'est bien authentifier avant de parcourir les URL ou a les droits pour accèder aux pages d'administration.*
 
 ## Chat avec le robot conversationnel
 
