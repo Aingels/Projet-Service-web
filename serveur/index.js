@@ -2,7 +2,6 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 const RiveScript = require('rivescript');
-var session = require('express-session');//session
 const Discord = require('discord.js');//discord
 var fetch = require("node-fetch");
 
@@ -16,27 +15,6 @@ var corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
-const NODE_ENV = "development"
-
-//paramètres des sessions
-
-//duree du cookie 
-const TWO_HOURS = 100 * 60 * 60 * 2
-
-const IN_PROD = NODE_ENV === "production"
-
-app.use(session({
-  name: "sid",
-  secret: 'this a nynyserv',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: TWO_HOURS,
-    sameSite: true,
-    secure: IN_PROD
-  }
-}))
-
 //prise en charge format JSON (formulaire)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -48,10 +26,9 @@ app.get('/bots', getBots);
 app.get('/recupererCerveaux', recupererCerveaux);
 app.get('/recupererBots', recupererBots);
 app.post('/setFavoriteColor', cors(corsOptions), setFavoriteColor);
-app.get('/usersession', getUserSession)
 app.post('/getFavoriteColor', getFavColor);
 app.post('/associationBotDiscord', associationBotDiscord);
-
+app.post('/deleteBot', deleteBot);
 
 //MongoDB (persistance de données)
 const mongodb = require("mongodb");
@@ -121,10 +98,6 @@ async function connexion(req, res) {
     .then((result) => {
       if (result != null) {
         console.log(`index : user found : ${result.pseudo}`);
-        req.session.username = pseudo;
-        console.log("Session save with username :", req.session.username);
-        req.session.favcolor = mongoDBInstance.getFavColor(pseudo);
-        req.session.isAuth = true;
         res.status(200).json({
           "status": "ok",
           "isAdmin": result.isAdmin,
@@ -179,6 +152,18 @@ async function launchExistingBots() {
   });
 }
 
+async function deleteBot(req, res) {
+  await mongoDBInstance.deleteBot(req.body.botPort)
+    .catch((err) => {
+      console.log(`(error) deleteBot : ${response.status}`);
+    });
+
+ 
+  res.status(200).json({
+    "status": "ok",
+  });
+}
+
 async function setFavoriteColor(req, res) {
   console.log(`post setFavoriteColor : ${req.body.color}`);
   await mongoDBInstance.setFavoriteColor(req.body.pseudo, req.body.mdp, req.body.color)
@@ -218,28 +203,6 @@ async function getFavColor(req, res) {
     "favcolor": color
   });
 
-
-}
-
-async function getUserSession(req, res) {
-  const username = req.session.username;
-  console.log("Tried to get session username :", req.session.username)
-  const favcolor = req.session.favcolor;
-
-  if (username != undefined) {
-    res.status(200).json({
-      "status": "ok",
-      "username": username,
-      "favcolor": favcolor
-    })
-  } else {
-    console.log("session not defined")
-    res.status(200).json({
-      "status": "sessiono not defined",
-      "username": username,
-      "favcolor": favcolor
-    })
-  }
 
 }
 

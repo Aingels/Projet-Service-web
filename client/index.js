@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 
 //session
 app.use(session({secret: "shhh"}));
+
 var sess;
 
 
@@ -246,7 +247,6 @@ app.post('/creerBot', async function(req,res){
   }
 );
 
-//création d'un bot
 app.get('/associationBotDiscord', async function(req, res){
 	console.log("get /associationBotDiscord")
 
@@ -304,6 +304,58 @@ app.post('/associationBotDiscord', async function(req,res){
 	    }else{
 	    	res.render('adminAssociationBotDiscord',{'botPort':-1 , "bots":bots});
 	    }
+	}
+  }
+);
+
+app.get('/deleteBot', async function(req, res){
+	console.log("get /deleteBot")
+
+	//vérification droits
+	if(sess == undefined || ! sess.isAdmin){
+		console.log("Session non autorisée !");
+		res.render('connexion',{wrongSession:true});
+	}else{
+		//récupération des bots
+		let bots = await getBots();
+		res.render('deleteBot',{isAdmin:sess.isAdmin , bots:bots});
+	}	
+  }
+);
+
+app.post('/deleteBot', async function(req,res){
+	console.log("post /deleteBot");
+
+	//vérification droits
+	if(sess == undefined || ! sess.isAdmin){
+		console.log("Session non autorisée !");
+		res.render('connexion',{wrongSession:true});
+	}else{
+		var data=req.body;
+
+		//fetch
+		const response = await fetch('http://localhost:3000/deleteBot', 
+			{
+				//mode: 'no-cors',
+				method:"POST",
+			 	headers: {
+			      'Accept': 'application/json',
+			      'Content-Type': 'application/json'
+			    },
+			    body: JSON.stringify(data)
+			})
+			.then(response => response.json())//pay attention not using res twice 
+			.catch((err)=>{
+	            console.log(`(error) deleteBot : ${response.status}`);
+	        });	
+	    console.log(`post deleteBot : tentative de suppression bot : ${JSON.stringify(response.status)}`);
+		if(response.status=="ok"){
+		    res.render(`adminAccueil`,{isAdmin:sess.isAdmin});
+		}else{
+			//récupération des bots
+			let bots = await getBots();
+			res.render('deleteBot',{isAdmin:sess.isAdmin , bots:bots});
+		}
 	}
   }
 );

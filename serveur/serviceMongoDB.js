@@ -66,7 +66,6 @@ class ServiceMongoDB {
 			});
 	}
 
-	//todo : vérif droit admin
 	async addBot(botName,brain) {
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");
@@ -109,10 +108,23 @@ class ServiceMongoDB {
 			return port;
 		}
 	}
+
 	async getBots() {
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");
 		return await db.collection("Bots").find("SELECT * FROM Bots").toArray();
+	}
+
+	async deleteBot(botPort) {
+		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
+		var db = client.db("TPNodejs");
+		var collection = db.collection("Bots");
+
+
+		await collection.deleteOne( { port : parseInt(botPort) } );
+		
+		console.log(`MongoDB > deleteBot : ${botPort}`);
+		client.close();		
 	}
 
 	async setFavoriteColor(pseudoGiven, mdpGiven, color) {
@@ -140,17 +152,6 @@ class ServiceMongoDB {
 			});   
 	}
 
-	async getFavColor(pseudo){
-		console.log(pseudo);
-		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-		var db = client.db("TPNodejs");
-		try {
-			return await db.collection("Bots").findOne({ pseudo: pseudo }).favoriteColor.toString();
-		} catch (err){
-			console.log("User hasn't benn found in the database.");
-			return undefined;
-		}	
-	}
 }
 
 
