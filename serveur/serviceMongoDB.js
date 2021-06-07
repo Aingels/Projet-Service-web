@@ -119,38 +119,25 @@ class ServiceMongoDB {
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");
 		var collection = db.collection("User");
-
-		 //connexion user in db
-		  var user = await this.getUser(pseudoGiven,mdpGiven)
-		  .catch((err) => {
-		      console.error(err)
-		     return null;
-		 });
-		  if(user!=null){
-		  	//client connecté
-		      	//var favoriteColor = { favoriteColor: color };
-		      	//modification couleur préférée
-				return await collection.updateOne(
-						{"pseudo" : pseudoGiven},
-						{$set: { "favoriteColor" : color}}
-					)
-					.then((result2) => {
-						if (result2 != null) {
-							console.log(`MongoDB > setFavoriteColor : ok`);
-							client.close();
-						} else {
-							console.log('MongoDB > setFavoriteColor : error');
-							client.close();
-						}
-						return result2;
-					})
-					.catch((err) => {
-						console.error(err)
-					});
-		  }else {
-	        console.log(`MongoDB > setFavoriteColor : error connection`);
-	        return null;
-	      }
+      	//var favoriteColor = { favoriteColor: color };
+      	//modification couleur préférée
+		return collection.updateOne(
+				{"pseudo" : pseudoGiven},
+				{$set: { "favoriteColor" : color}}
+			)
+			.then((result2) => {
+				if (result2 != null) {
+					console.log(`MongoDB > setFavoriteColor : ok`);
+					client.close();
+				} else {
+					console.log('MongoDB > setFavoriteColor : error');
+					client.close();
+				}
+				return result2;
+			})
+			.catch((err) => {
+				console.error(err)
+			});   
 	}
 
 	async getFavColor(pseudo){
@@ -164,33 +151,6 @@ class ServiceMongoDB {
 			return undefined;
 		}	
 	}
-
-	/*sans vérification connexion
-		async setFavoriteColor(pseudoGiven, mdpGiven, color) {
-			const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
-			var db = client.db("TPNodejs");
-			var collection = db.collection("User");
-	      	//var favoriteColor = { favoriteColor: color };
-	      	//modification couleur préférée
-			return collection.updateOne(
-					{"pseudo" : pseudoGiven},
-					{$set: { "favoriteColor" : color}}
-				)
-				.then((result2) => {
-					if (result2 != null) {
-						console.log(`MongoDB > setFavoriteColor : ok`);
-						client.close();
-					} else {
-						console.log('MongoDB > setFavoriteColor : error');
-						client.close();
-					}
-					return result2;
-				})
-				.catch((err) => {
-					console.error(err)
-				});   
-		}
-	*/
 }
 
 

@@ -519,7 +519,6 @@ async function associationBotDiscord(req, res) {
       }
 
     }
-    //todo : associer cerveau bot discord au cerveau du bot rivescript
   });
 
   //envoie réponse
