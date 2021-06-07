@@ -99,7 +99,7 @@ async function getResponse() {
 
     const getColor = await fetch('http://localhost:3000/getFavoriteColor',param).catch(err => console.log(err));
     let vars = {"favcolor":favcolor}; //fetch
-
+    
     corp = {
         message ,
         username ,

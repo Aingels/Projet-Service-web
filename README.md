@@ -39,5 +39,6 @@ Dans l'interface administration vous pourrez créer un bot en définnisant son n
 
 ## Connection du bot à Discord
 
-
+En tant qu'administrateur vous avez accès à cette fonctionnalité.
+Il suffit de choisir un bot et d'entrer le `token` de votre bot Discord.
 
