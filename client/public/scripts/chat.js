@@ -78,17 +78,16 @@ async function chooseBot(port){
 
 
 //Gets the text text from the input box and processes it
+//Gets the text text from the input box and processes it
 async function getResponse() {
     let message = $("#textInput").val();
     //todo definie username et vars en fonction de l'utilisateur
     
-    /*
-    let userSessionInfos = await fetch('http://localhost:3000/usersession').catch(err => console.log(err));
-    const jsonuser = await userSessionInfos.json();*/
-    const username = req.session.pseudo;
-    let favcolor = req.session.favoriteColor;
+    
+    const username = undefined;
+    let favcolor = undefined;
 
-    console.log(username,favcolor);
+    console.log(username);
     
 
     let corp = {       

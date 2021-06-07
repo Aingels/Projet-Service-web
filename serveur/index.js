@@ -335,15 +335,6 @@ async function getReply(bot, req, res) {
     username = "men";
   }
 
-  if (vars.favcolor==undefined){
-    vars.favcolor = await mongoDBInstance.getFavColor(username);
-    bot.setUservar(username,favcolor,vars);
-  }
-
-
-  
-  
-
   if (typeof (message) === "undefined") {
     message = "empty";
   }
