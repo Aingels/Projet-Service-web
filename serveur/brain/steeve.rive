@@ -33,12 +33,31 @@
 ^ With her forcefield around her,\n
 ^ The Spider, the bounder,\n
 ^ Is not in the picture today.
+- Roses are Red, \
+^ The sky is blue
 
 + i love you
 - I'll be always here if you need me OwO
 
 + ok
 - ok
+
++ i am sad
+- Oh no ... Why don't you try to tell me : tell me a joke
+
++ [*] (shit|fuck|dick|ass hole|stupid) [*]
+- Language ! {topic=swearword}
+
+> topic swearword 
+
+    + [*] sorry [*]
+    - It's ok, I'll forgive you ! {topic=random}
+
+    + * 
+    -You need to apologise.
+    -Apologise!
+    -Nananana CAN'T HEAR YOU !
+< topic
 
 //error
 + *

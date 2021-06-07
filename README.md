@@ -15,7 +15,7 @@ node index.js
 ```
 dans chacun des deux répertoire */serveur/index.js* et */client/index.js*.
 
-Le serveur écoute sur le port 3000 et le client sur 3001. Tous les bots enregistrés dans la base de données seront lancés.
+Le serveur écoute sur le port `3000` et le client sur `3001`. Tous les bots enregistrés dans la base de données seront lancés.
 
 # 2.Utilisation du service
 

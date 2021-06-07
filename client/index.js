@@ -382,3 +382,12 @@ app.post('/setFavoriteColor', async function(req, res){
 app.listen(port, (err,data) => {
 	console.log(`Client server listening on port ${port}`);
 });
+
+async function getBots() {
+	const response = await fetch('http:localhost:3000/recupererBots');
+	if (!response.ok) {
+	  throw new Error('Problem getting bot list');
+	}
+	const { bots } = await response.json();
+	return bots;
+  }
