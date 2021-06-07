@@ -4,9 +4,6 @@ const port = 3001;
 var bodyParser = require('body-parser');
 var fetch = require("node-fetch");
 
-const Discord = require('discord.js');//discord
-const dotenv = require('dotenv').config();
-
 app.set('view engine', 'ejs');
 
 app.use(express.static(__dirname+'/public')); // to get static pages
@@ -301,22 +298,6 @@ app.post('/associationBotDiscord', async function(req,res){
 	console.log(`token : ${req.body.token}`);
 	console.log(`botPort : ${req.body.botPort}`);
 	let botPort=req.body.botPort;
-	let token=req.body.token;
-	//récupération du bot rivescript
-
-	//discord
-	const clientDiscord = new Discord.Client();
-	clientDiscord.once('ready', () => {
-		console.log('Ready!');
-	});
-	clientDiscord.login(token);//token du bot discord
-	clientDiscord.on('message', message => {
-		if (message.content === '!ping') {
-			// send back "Pong." to the channel the message was sent in
-			message.channel.send('Pong.');
-		}
-		//todo : associer cerveau bot discord au cerveau du bot rivescript
-	});
 
 	//récupération des bots
 	let bots;
@@ -342,8 +323,29 @@ app.post('/associationBotDiscord', async function(req,res){
           console.log(`(error) recupererBots : ${response.status}`);
     });
 
-    res.render(`chat`,{'botPort':botPort , "bots":bots});
-	
+	//fetch request
+	const response2 = await fetch('http://localhost:3000/associationBotDiscord',
+		{
+				//mode: 'no-cors',
+				method:"POST",
+			 	headers: {
+			      'Accept': 'application/json',
+			      'Content-Type': 'application/json'
+			    },
+			    body: JSON.stringify(req.body)
+			})
+	.catch((err)=>{
+          console.log(`(error) associationBotDiscord`);
+    });
+
+    console.log(`fetch > associationBotDiscord : ${response2.status}`);	
+
+    if(response2.status==200){
+    	res.render(`chat`,{'botPort':botPort , "bots":bots});
+    }else{
+    	res.render('adminAssociationBotDiscord',{'botPort':-1 , "bots":bots});
+    }
+
   }
 );
 
