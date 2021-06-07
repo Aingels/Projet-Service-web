@@ -1,5 +1,8 @@
 # Projet Service web
 
+# 0. Vidéo explicative
+https://youtu.be/qSgl9fKcuEs
+
 # 1.Lancement du service
 
 ### Description
