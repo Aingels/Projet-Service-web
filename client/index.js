@@ -66,7 +66,7 @@ app.post('/inscription', async function(req, res){
 		//récupération des bots
 		let bots = await getBots();
 
-		res.render(`chat`,{'botPort':-1 , pseudo:pseudoGiven , isAdmin:false , "bots":bots});
+		res.render(`chat`,{'botPort':-1 , pseudo:pseudoGiven , isAdmin:false , "bots":bots , pseudo:sess.pseudo});
 	}else{
 		res.render('inscription',{pseudoAlreadyTaken:true});
 	}
@@ -114,7 +114,7 @@ app.post('/connexion', async function(req, res){
 	    sess.isAdmin=response.isAdmin;  
 	    sess.favoriteColor=null;
 
-		res.render(`chat`,{'botPort':-1 , pseudo:pseudoGiven , isAdmin:response.isAdmin , "bots":bots});
+		res.render(`chat`,{'botPort':-1 , pseudo:pseudoGiven , isAdmin:response.isAdmin , "bots":bots , pseudo:pseudoGiven});
 	}else{
 		res.render('connexion',{wrongId:true});
 	}
@@ -146,7 +146,7 @@ app.get("/chat",async function (req,res) {
 		//récupération des bots
 		let bots = await getBots();
 
-		res.render(`chat`,{'botPort':-1 , isAdmin:sess.isAdmin , "bots":bots});
+		res.render(`chat`,{'botPort':-1 , isAdmin:sess.isAdmin , "bots":bots , pseudo:sess.pseudo});
 	}
 })
 
@@ -237,7 +237,7 @@ app.post('/creerBot', async function(req,res){
 			//récupération des bots
 			let bots = await getBots();
 
-		    res.render(`chat`,{'botPort':botPort , "bots":bots , isAdmin:sess.isAdmin});
+		    res.render(`chat`,{'botPort':botPort , "bots":bots , isAdmin:sess.isAdmin , pseudo:sess.pseudo});
 		}else{
 			console.log("creation bot failed (nom de bot déjà pris)");		
 			res.render('adminCreerBot',{"nomPris":true,"cerveaux":response.cerveaux});
@@ -300,7 +300,7 @@ app.post('/associationBotDiscord', async function(req,res){
 	    console.log(`fetch > associationBotDiscord : ${response2.status}`);	
 
 	    if(response2.status==200){
-	    	res.render(`chat`,{'botPort':botPort , "bots":bots , isAdmin:sess.isAdmin});
+	    	res.render(`chat`,{'botPort':botPort , "bots":bots , isAdmin:sess.isAdmin , pseudo:sess.pseudo});
 	    }else{
 	    	res.render('adminAssociationBotDiscord',{'botPort':-1 , "bots":bots});
 	    }

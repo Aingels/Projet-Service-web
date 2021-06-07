@@ -1,3 +1,5 @@
+let pseudo;
+
 // Collapsible
 var coll = document.getElementsByClassName("collapsible");
 let currentPort = -1;
@@ -181,3 +183,12 @@ $("#textInput").keypress(function (e) {
         sendButton();
     }
 });
+
+function setPseudo(pseudoGiven){
+    pseudo=pseudoGiven;
+}
+
+function onLoadChatEjs(botPort,pseudoGiven){
+    chooseBot(botPort);
+    setPseudo(pseudoGiven);
+}
