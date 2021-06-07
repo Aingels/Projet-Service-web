@@ -46,7 +46,10 @@ class ServiceMongoDB {
 		var db = client.db("TPNodejs");
 		var collection = db.collection("User");
 		var user = { pseudo: pseudoGiven, mdp: mdpGiven };
-		//envoyer la réponse
+
+		//clean DB --> 
+		//collection.deleteMany();
+
 		return await collection.findOne(user)
 			.then((result) => {
 				if (result != null) {
@@ -69,7 +72,8 @@ class ServiceMongoDB {
 		var db = client.db("TPNodejs");
 		var collection = db.collection("Bots");
 
-		//clean DB --> collection.deleteMany();
+		//clean DB --> 
+		//collection.deleteMany();
 		
 		//vérifier disponibilité port		
 		let port = parseInt(Math.random() * (3100 - 3002) + 3002);

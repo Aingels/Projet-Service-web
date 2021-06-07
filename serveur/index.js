@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 const RiveScript = require('rivescript');
 var session = require('express-session');//session
+const Discord = require('discord.js');//discord
 
 var app = express();
 
@@ -50,6 +51,7 @@ app.get('/recupererBots', recupererBots);
 app.post('/setFavoriteColor', cors(corsOptions), setFavoriteColor);
 app.get('/usersession',getUserSession)
 app.post('/getFavoriteColor',getFavColor);
+app.post('/associationBotDiscord',associationBotDiscord);
 
 
 //MongoDB (persistance de données)
@@ -453,3 +455,30 @@ async function recupererBots(req, res) {
     "bots": botTab2,
   });
 };
+
+async function associationBotDiscord(req, res) {
+  console.log("post /associationBotDiscord");
+
+  let botPort=req.body.botPort;
+  let token=req.body.token
+
+  //discord
+  const clientDiscord = new Discord.Client();
+  clientDiscord.once('ready', () => {
+    console.log('Ready!');
+  });
+  clientDiscord.login(token);//token du bot discord
+  clientDiscord.on('message', message => {
+    if (message.content === '!ping') {
+      // send back "Pong." to the channel the message was sent in
+      message.channel.send('Pong.');
+    }
+    //todo : associer cerveau bot discord au cerveau du bot rivescript
+  });
+
+  //envoie réponse
+  res.status(200).json({
+    "status": "ok",
+  });
+
+}
