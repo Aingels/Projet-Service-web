@@ -159,7 +159,7 @@ class ServiceMongoDB {
 		try {
 			return await db.collection("Bots").findOne({ pseudo: pseudo }).favoriteColor.toString();
 		} catch (err){
-			console.log("User hasn't benn found in the database.");
+			console.log("Favorite color hasn't been found in the database.");
 			return undefined;
 		}	
 	}
