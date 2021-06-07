@@ -127,7 +127,7 @@ class ServiceMongoDB {
 		client.close();		 
 	} 
 
-	async setFavoriteColor(pseudoGiven, mdpGiven, color) {
+	async setFavoriteColor(pseudoGiven, color) {
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");
 		var collection = db.collection("User");
@@ -152,14 +152,15 @@ class ServiceMongoDB {
 			});   
 	}
 
-	async getFavColor(pseudo){
-		console.log(pseudo);
+	async getFavColor(pseudoGived){
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");
 		try {
-			return await db.collection("Bots").findOne({ pseudo: pseudo }).favoriteColor.toString();
+			const user = await db.collection("User").findOne({ pseudo: pseudoGived.toString() });
+			return user.favoriteColor;
 		} catch (err){
-			console.log("Favorite color hasn't been found in the database.");
+			console.log(err);
+			//console.log("Favorite color hasn't been found in the database.");
 			return undefined;
 		}	
 	}

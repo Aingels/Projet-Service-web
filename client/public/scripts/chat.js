@@ -103,8 +103,8 @@ async function getResponse() {
         body : JSON.stringify(corp)
     }
 
-    const getColor = await fetch('http://localhost:3000/getFavoriteColor',param).catch(err => console.log(err));
-    let vars = {"favcolor":getColor}; //fetch
+    
+    let vars = undefined //fetch
 
     corp = {
         message ,
