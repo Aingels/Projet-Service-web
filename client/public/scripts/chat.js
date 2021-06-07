@@ -84,10 +84,8 @@ async function getResponse() {
     let message = $("#textInput").val();
     //todo definie username et vars en fonction de l'utilisateur
     
-    let userSessionInfos = await fetch('http://localhost:3000/usersession').catch(err => console.log(err));
-    const jsonuser = await userSessionInfos.json();
-    const username = jsonuser.username;
-    let favcolor = jsonuser.favcolor;
+
+    const username = pseudo;
 
     console.log(username);
     
@@ -106,7 +104,7 @@ async function getResponse() {
     }
 
     const getColor = await fetch('http://localhost:3000/getFavoriteColor',param).catch(err => console.log(err));
-    let vars = {"favcolor":favcolor}; //fetch
+    let vars = {"favcolor":getColor}; //fetch
 
     corp = {
         message ,
