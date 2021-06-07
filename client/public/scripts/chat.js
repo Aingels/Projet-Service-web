@@ -82,12 +82,13 @@ async function getResponse() {
     let message = $("#textInput").val();
     //todo definie username et vars en fonction de l'utilisateur
     
+    /*
     let userSessionInfos = await fetch('http://localhost:3000/usersession').catch(err => console.log(err));
-    const jsonuser = await userSessionInfos.json();
-    const username = jsonuser.username;
-    let favcolor = jsonuser.favcolor;
+    const jsonuser = await userSessionInfos.json();*/
+    const username = req.session.pseudo;
+    let favcolor = req.session.favoriteColor;
 
-    console.log(username);
+    console.log(username,favcolor);
     
 
     let corp = {       
