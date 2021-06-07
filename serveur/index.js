@@ -194,7 +194,7 @@ async function launchExistingBots() {
 
 async function setFavoriteColor(req, res) {
   console.log(`post setFavoriteColor : ${req.body.color}`);
-  await mongoDBInstance.setFavoriteColor(req.body.pseudo, req.body.mdp, req.body.color)
+  await mongoDBInstance.setFavoriteColor(req.body.pseudo,  req.body.color)
     //envoyer la réponse
     .then((result) => {
       if (result != null) {
@@ -379,6 +379,7 @@ async function getReply(bot, req, res) {
   var username = req.body.username;
   var message = req.body.message;
   var vars = req.body.vars;
+  let favColorInBDD;
 
   // Make sure username and message are included.
   if (typeof (username) === "undefined") {
@@ -389,14 +390,15 @@ async function getReply(bot, req, res) {
     message = "empty";
   }
 
-  // Copy any user vars from the post into RiveScript.
-  if (typeof (vars) !== "undefined") {
-    for (var key in vars) {
-      if (vars.hasOwnProperty(key)) {
-        bot.setUservar(username, key, vars[key]);
-      }
-    }
-  }
+  vars.favcolor = await mongoDBInstance.getFavColor(username);
+
+  if (vars.favcolor == undefined){
+    favColorInBDD = false;
+  } else {
+    favColorInBDD = true;
+    bot.setUservar(username,"favcolor",vars.favcolor);
+  } 
+
 
   // Obtenir une réponse du bot.
   // bot.reply(username, message, this).then(function(reply) {
@@ -427,7 +429,14 @@ async function getReply(bot, req, res) {
     console.log(err);
   });
 
-  vars = bot.getUservars(username);
+  vars = await bot.getUservars(username);
+  
+
+  if (vars.favcolor!=undefined && !favColorInBDD){
+    mongoDBInstance.setFavoriteColor(username,vars.favcolor);
+    favColorInBDD=true;
+    
+  }
 
   res.status(200).json({
     "status": "ok",
