@@ -4,7 +4,7 @@
 
 ### Description
 
-Le service est détaché en deux parties. L'API REST côté serveur qui s'occupe du lancement et de l'administration des bots et le côté client que s'occupe des vues.
+Le service est détaché en deux parties. L'API REST côté serveur qui s'occupe du lancement et de l'administration des bots et le côté client que s'occupe des vues et de la mémorisation des droits.
 
 ### Consignes de lancement
 
@@ -22,7 +22,7 @@ Le serveur écoute sur le port `3000` et le client sur `3001`. Tous les bots enr
 ## Première étape :
 Rendez vous sur *localhost:3001* sur cette page vous pourrez vous connecter ou créer un compte puis commencer à utiliser les services.
 
->Note : *session-express a été utilisé pour vérifier que le client c'est bien authentifier avant de parcourir les URL cependant un problème inexpliqué persiste et empêche d'exploiter cette fonctionnalité. Piste : le cookie ne semble pas être envoyé au client bien que express-session doive s'en occuper.*
+>Note : *session-express a été utilisé pour vérifier que le client s'est bien authentifier avant de parcourir les URL.
 
 ## Chat avec le robot conversationnel
 
@@ -35,9 +35,11 @@ Connectez vous avec le compte administrateur :
 - `id` : admin
 - `mdp` : admin
 
-Dans l'interface administration vous pourrez créer un bot en définnisant son nom et en sélectionant son cerveau. Celui-ci sera lancé et enregistré dans la base de données persistante.
+L'interface administration est accessible depuis le chat ou à l'adresse suivante : *localhost:3001/adminAccueil*.
+Dans l'interface administration, vous pourrez créer un bot en définissant son nom et en sélectionant son cerveau. Celui-ci sera lancé et enregistré dans la base de données persistante.
+La base de données utilisée est MongoDB.
 
-## Connection du bot à Discord
+## Connexion du bot à Discord
 
 En tant qu'administrateur vous avez accès à cette fonctionnalité.
 Il suffit de choisir un bot et d'entrer le `token` de votre bot Discord.
