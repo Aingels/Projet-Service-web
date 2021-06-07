@@ -64,9 +64,15 @@ function getHardResponse(userText) {
     document.getElementById("chat-bar-bottom").scrollIntoView(true);
 }
 
+
 async function chooseBot(port){
     console.log("Connected to bot which port is : ",port);
     currentPort = port;
+    if (port!=-1){
+        $("#connectionMessage").css('color','green');
+        $("#connectionMessage").text("Connection done !");
+    }
+    
 }
 
 
@@ -99,7 +105,7 @@ async function getResponse() {
 
     const getColor = await fetch('http://localhost:3000/getFavoriteColor',param).catch(err => console.log(err));
     let vars = {"favcolor":favcolor}; //fetch
-    
+
     corp = {
         message ,
         username ,
@@ -156,7 +162,13 @@ function buttonSendText(sampleText) {
 }
 
 function sendButton() {
-    getResponse();
+    if (currentPort!=-1){
+        getResponse();
+    } else {
+        $("#connectionMessage").css('color','red');
+        $("#connectionMessage").text("You need to choose a bot first !");
+    }
+    
 }
 
 function heartButton() {
@@ -166,6 +178,6 @@ function heartButton() {
 // Press enter to send a message
 $("#textInput").keypress(function (e) {
     if (e.which == 13) {
-        getResponse();
+        sendButton();
     }
 });

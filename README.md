@@ -42,3 +42,10 @@ Dans l'interface administration vous pourrez créer un bot en définnisant son n
 En tant qu'administrateur vous avez accès à cette fonctionnalité.
 Il suffit de choisir un bot et d'entrer le `token` de votre bot Discord.
 
+Pour que le bot réponde et réagisse à vos messages il faudra rajouter le préfix `!bot` :
+
+```
+!bot my name is Anthony
+> Nice to meet you, Anthony.
+```
+
