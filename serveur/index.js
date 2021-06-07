@@ -51,7 +51,7 @@ app.post('/setFavoriteColor', cors(corsOptions), setFavoriteColor);
 app.get('/usersession', getUserSession)
 app.post('/getFavoriteColor', getFavColor);
 app.post('/associationBotDiscord', associationBotDiscord);
-
+app.post('/deleteBot', deleteBot);
 
 //MongoDB (persistance de données)
 const mongodb = require("mongodb");
@@ -143,6 +143,19 @@ async function connexion(req, res) {
       });
     });
 };
+
+async function deleteBot(req, res) {
+  await mongoDBInstance.deleteBot(req.body.botPort)
+    .catch((err) => {
+      console.log(`(error) deleteBot : ${response.status}`);
+    });
+
+ 
+  res.status(200).json({
+    "status": "ok",
+  });
+}
+
 
 async function addNewBot(req, res) {
   //ajouter le bot dans la base de données et détermination d'un port disponible

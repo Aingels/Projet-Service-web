@@ -115,6 +115,18 @@ class ServiceMongoDB {
 		return await db.collection("Bots").find("SELECT * FROM Bots").toArray();
 	}
 
+	async deleteBot(botPort) { 
+		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true }); 
+		var db = client.db("TPNodejs"); 
+		var collection = db.collection("Bots"); 
+ 
+ 
+		await collection.deleteOne( { port : parseInt(botPort) } ); 
+		 
+		console.log(`MongoDB > deleteBot : ${botPort}`); 
+		client.close();		 
+	} 
+
 	async setFavoriteColor(pseudoGiven, mdpGiven, color) {
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");

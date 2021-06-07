@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/formulaire.css" type="text/css">
+
+    <title>Interface d'administration - suppression d'un bot</title>
+
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"></link>
+  </head>
+  <body>
+
+    <div id="container">
+      <div class="jumbotron">
+
+        <h2>Suppression d'un bot</h2>
+
+        <form action="deleteBot" method="POST">
+
+          <label>Veuillez sélectionner le bot à supprimer</label><br>
+
+           <select name="botPort" id="selectionBot"> 
+                        <% bots.forEach(function(bot){ %>
+                            <option value="<%= bot[1] %>"><%= bot[0] %></option>
+                        <% }); %>
+                    </select> 
+
+          <input type="submit" value="Envoyer">
+        </form>
+
+      </div>
+    </div>
+  </body>
+  <script></script>
+
+</html>
