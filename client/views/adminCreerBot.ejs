@@ -18,7 +18,7 @@
 
         <form action="creerBot" method="POST">
           <label>Nom : </label>
-          <input type="text" name="botName"/> <br>
+          <input type="text" name="botName" required/> <br>
 
           <% if (locals.nomPris) { %>
             <label>Ce nom est déjà pris, merci de faire preuve de plus de créativité.</label>
