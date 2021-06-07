@@ -37,7 +37,8 @@
 + i love you
 - I'll be always here if you need me OwO
 
-
++ ok
+- ok
 
 //error
 + *
@@ -95,6 +96,8 @@
 % you never told me your favorite color what is it 
 -<set favcolor=<star1>> I will remember that -□O !
 
++ my favorite color is *
+-<set favcolor=<star1>> I will remember that -□O !
 
 
 

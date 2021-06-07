@@ -430,7 +430,7 @@ async function recupererCerveaux(req, res) {
   //envoyer la réponse
   res.status(200).json({
     "status": "ok",
-    "cerveaux": ["standard", "firstbot"],
+    "cerveaux": ["standard", "steeve"],
   });
 };
 
