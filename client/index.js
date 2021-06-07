@@ -50,34 +50,9 @@ app.post('/inscription', async function(req, res){
         });
     console.log(`Inscription du user : ${JSON.stringify(req.body.pseudo)} , ${JSON.stringify(req.body.mdp)} : ${response.status}`);
 	if(response.status=="ok"){
-		//passer le user en paramètre : session ou paramètre ejs ou paramètre get
-		//req.session.pseudo = req.body.pseudo;//stockage pseudo user dans session
-		//res.redirect('discuss',{"pseudo":req.body.pseudo});
-		//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
 
 		//récupération des bots
-		let bots;
-		//fetch request
-		await fetch('http://localhost:3000/recupererBots')
-		//traitement de la réponse
-		.then(response => response.json())//pay attention not using res twice 
-		.then(response => {
-			console.log(`recupererBots : ${response.status}`);
-			if(response.status=="ok"){
-				//affichage
-				/*
-				console.log(`bots :`);
-				for(const bot of response.bots){
-					console.log(`${bot}`);
-				}*/
-				bots=response.bots;
-			}else{
-				bots=null;
-			}
-		})
-		.catch((err)=>{
-	          console.log(`(error) recupererBots : ${response.status}`);
-	    });
+		let bots = await getBots();
 
 		res.render(`chat`,{'botPort':-1 , pseudo:pseudoGiven , isAdmin:false , "bots":bots});
 	}else{
@@ -116,35 +91,9 @@ app.post('/connexion', async function(req, res){
         });
         console.log(`connexion au user : ${JSON.stringify(req.body.pseudo)} : ${response.status}`);
 	if(response.status=="ok"){
-		//passer le user en paramètre : session ou paramètre ejs ou paramètre get
-		//req.session.pseudo = req.body.pseudo;//stockage pseudo user dans session
-		//res.redirect('discuss',{"pseudo":req.body.pseudo});
-		//res.render(`discuss?pseudo=${JSON.stringify(pseudo)}`); GET
 
-	
 		//récupération des bots
-		let bots;
-		//fetch request
-		await fetch('http://localhost:3000/recupererBots')
-		//traitement de la réponse
-		.then(response => response.json())//pay attention not using res twice 
-		.then(response => {
-			console.log(`recupererBots : ${response.status}`);
-			if(response.status=="ok"){
-				//affichage
-				/*
-				console.log(`bots :`);
-				for(const bot of response.bots){
-					console.log(`${bot}`);
-				}*/
-				bots=response.bots;
-			}else{
-				bots=null;
-			}
-		})
-		.catch((err)=>{
-	          console.log(`(error) recupererBots : ${response.status}`);
-	    });
+		let bots = await getBots();
 
 		res.render(`chat`,{'botPort':-1 , pseudo:pseudoGiven , isAdmin:response.isAdmin , "bots":bots});
 	}else{
@@ -226,28 +175,7 @@ app.post('/creerBot', async function(req,res){
 		let botPort=response.botPort;
 
 		//récupération des bots
-		let bots;
-		//fetch request
-		await fetch('http://localhost:3000/recupererBots')
-		//traitement de la réponse
-		.then(response => response.json())//pay attention not using res twice 
-		.then(response => {
-			console.log(`recupererBots : ${response.status}`);
-			if(response.status=="ok"){
-				//affichage
-				/*
-				console.log(`bots :`);
-				for(const bot of response.bots){
-					console.log(`${bot}`);
-				}*/
-				bots=response.bots;
-			}else{
-				bots=null;
-			}
-		})
-		.catch((err)=>{
-	          console.log(`(error) recupererBots : ${response.status}`);
-	    });
+		let bots = await getBots();
 
 	    res.render(`chat`,{'botPort':botPort , "bots":bots});
 	}else{
@@ -262,28 +190,7 @@ app.get('/associationBotDiscord', async function(req, res){
 	console.log("get /associationBotDiscord")
 
 	//récupération des bots
-	let bots;
-	//fetch request
-	await fetch('http://localhost:3000/recupererBots')
-	//traitement de la réponse
-	.then(response => response.json())//pay attention not using res twice 
-	.then(response => {
-		console.log(`recupererBots : ${response.status}`);
-		if(response.status=="ok"){
-			//affichage
-			/*
-			console.log(`bots :`);
-			for(const bot of response.bots){
-				console.log(`${bot}`);
-			}*/
-			bots=response.bots;
-		}else{
-			bots=null;
-		}
-	})
-	.catch((err)=>{
-          console.log(`(error) recupererBots : ${response.status}`);
-    });
+	let bots = await getBots();
 
 	res.render('adminAssociationBotDiscord',{'botPort':-1 , "bots":bots});
   }
@@ -300,28 +207,7 @@ app.post('/associationBotDiscord', async function(req,res){
 	let botPort=req.body.botPort;
 
 	//récupération des bots
-	let bots;
-	//fetch request
-	await fetch('http://localhost:3000/recupererBots')
-	//traitement de la réponse
-	.then(response => response.json())//pay attention not using res twice 
-	.then(response => {
-		console.log(`recupererBots : ${response.status}`);
-		if(response.status=="ok"){
-			//affichage
-			/*
-			console.log(`bots :`);
-			for(const bot of response.bots){
-				console.log(`${bot}`);
-			}*/
-			bots=response.bots;
-		}else{
-			bots=null;
-		}
-	})
-	.catch((err)=>{
-          console.log(`(error) recupererBots : ${response.status}`);
-    });
+	let bots = await getBots();
 
 	//fetch request
 	const response2 = await fetch('http://localhost:3000/associationBotDiscord',
@@ -349,47 +235,34 @@ app.post('/associationBotDiscord', async function(req,res){
   }
 );
 
-/*todo move to chat.js
-app.post('/setFavoriteColor', async function(req, res){
-	console.log(`post setFavoriteColor`);
-
-	//fetch request
-	const response = await fetch('http://localhost:3000/setFavoriteColor', 
-		{
-			//mode: 'no-cors',
-			method:"POST",
-		 	headers: {
-		      'Accept': 'application/json',
-		      'Content-Type': 'application/json'
-		    },
-		    body: JSON.stringify(req.body)
-		})
-		//traitement de la réponse
-		.then(response => response.json())//pay attention not using res twice 
-		.catch((err)=>{
-              console.log(`(error) setFavoriteColor : ${response.status}`);
-        });
-        console.log(`setFavoriteColor : ${response.status}`);
-	if(response.status=="ok"){
-		//chatbot réponds couleur modifiée
-		console.log("couleur modifiée")
-	}else{
-		//chatbot réponds couleur non modifiée
-		console.log("error : couleur non modifiée")
-	}
-  }
-);
-*/
-
 app.listen(port, (err,data) => {
 	console.log(`Client server listening on port ${port}`);
 });
 
 async function getBots() {
-	const response = await fetch('http:localhost:3000/recupererBots');
-	if (!response.ok) {
-	  throw new Error('Problem getting bot list');
-	}
-	const { bots } = await response.json();
+	let bots;
+	await fetch('http://localhost:3000/recupererBots')
+		//traitement de la réponse
+		.then(response => response.json())//pay attention not using res twice 
+		.then(response => {
+			console.log(`recupererBots : ${response.status}`);
+			if(response.status=="ok"){
+				//affichage
+				/*
+				console.log(`bots :`);
+				for(const bot of response.bots){
+					console.log(`${bot}`);
+				}*/
+				bots=response.bots;
+			}else{
+				bots=null;
+			}
+		})
+		.catch((err)=>{
+	          console.log(`(error) recupererBots : ${response.status}`);
+	    });
 	return bots;
-  }
+}
+
+
+
