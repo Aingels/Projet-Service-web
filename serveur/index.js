@@ -6,6 +6,7 @@ var cors = require('cors');
 const RiveScript = require('rivescript');
 var session = require('express-session');//session
 const Discord = require('discord.js');//discord
+var fetch = require("node-fetch");
 
 var app = express();
 
@@ -22,19 +23,19 @@ const NODE_ENV = "development"
 //paramètres des sessions
 
 //duree du cookie 
-const TWO_HOURS = 100*60*60*2
+const TWO_HOURS = 100 * 60 * 60 * 2
 
 const IN_PROD = NODE_ENV === "production"
 
 app.use(session({
-  name:"sid",
-  secret:'this a nynyserv',
+  name: "sid",
+  secret: 'this a nynyserv',
   resave: false,
-  saveUninitialized:false,
-  cookie:{
-    maxAge:TWO_HOURS,
-    sameSite:true,
-    secure:IN_PROD
+  saveUninitialized: false,
+  cookie: {
+    maxAge: TWO_HOURS,
+    sameSite: true,
+    secure: IN_PROD
   }
 }))
 
@@ -49,9 +50,9 @@ app.get('/bots', getBots);
 app.get('/recupererCerveaux', recupererCerveaux);
 app.get('/recupererBots', recupererBots);
 app.post('/setFavoriteColor', cors(corsOptions), setFavoriteColor);
-app.get('/usersession',getUserSession)
-app.post('/getFavoriteColor',getFavColor);
-app.post('/associationBotDiscord',associationBotDiscord);
+app.get('/usersession', getUserSession)
+app.post('/getFavoriteColor', getFavColor);
+app.post('/associationBotDiscord', associationBotDiscord);
 
 
 //MongoDB (persistance de données)
@@ -123,9 +124,9 @@ async function connexion(req, res) {
       if (result != null) {
         console.log(`index : user found : ${result.pseudo}`);
         req.session.username = pseudo;
-        console.log("Session save with username :",req.session.username);
+        console.log("Session save with username :", req.session.username);
         req.session.favcolor = mongoDBInstance.getFavColor(pseudo);
-        req.session.isAuth =true;
+        req.session.isAuth = true;
         res.status(200).json({
           "status": "ok",
           "isAdmin": result.isAdmin,
@@ -207,7 +208,7 @@ async function setFavoriteColor(req, res) {
 
 async function getFavColor(req, res) {
   console.log(req.body.username);
-  const color = await mongoDBInstance.getFavColor(req.body.username).catch(err=>{
+  const color = await mongoDBInstance.getFavColor(req.body.username).catch(err => {
     console.log(err);
     res.status(500).json({
       "status": "problem finding your preferences"
@@ -222,26 +223,26 @@ async function getFavColor(req, res) {
 
 }
 
-async function getUserSession(req,res) {
-  const username=req.session.username;
-  console.log("Tried to get session username :",req.session.username)
-  const favcolor=req.session.favcolor;
+async function getUserSession(req, res) {
+  const username = req.session.username;
+  console.log("Tried to get session username :", req.session.username)
+  const favcolor = req.session.favcolor;
 
-  if (username!=undefined){
+  if (username != undefined) {
     res.status(200).json({
-      "status":"ok",
+      "status": "ok",
       "username": username,
       "favcolor": favcolor
     })
   } else {
     console.log("session not defined")
     res.status(200).json({
-      "status":"sessiono not defined",
+      "status": "sessiono not defined",
       "username": username,
       "favcolor": favcolor
     })
   }
-  
+
 }
 
 //----------------------fonctions de création de serveurs pour les bots------------------
@@ -341,7 +342,7 @@ function createRivescriptServer(bot, port) {
   app.post("/reply", (req, res) => {
     getReply(bot, req, res);
   });
-  
+
   //erreur URL
   app.use(function (req, res, next) {
     res.setHeader('Content-Type', 'text/plain');
@@ -369,12 +370,12 @@ async function getReply(bot, req, res) {
   var vars = req.body.vars;
 
   // Make sure username and message are included.
-  if (typeof (username) === "undefined" ) {
-    username="men";
+  if (typeof (username) === "undefined") {
+    username = "men";
   }
 
-  if ( typeof (message) === "undefined") {
-    message="empty";
+  if (typeof (message) === "undefined") {
+    message = "empty";
   }
 
   // Copy any user vars from the post into RiveScript.
@@ -407,11 +408,11 @@ async function getReply(bot, req, res) {
 
   let reply = await bot.reply(username, message, this).catch(err => {
     res.status(200).json({
-      "status":"error",
-      "reply":"I ran into an error (╯`□`）╯︵ ┻━┻",
+      "status": "error",
+      "reply": "I ran into an error (╯`□`）╯︵ ┻━┻",
       "vars": bot.getUservars(username)
     })
-    
+
     console.log(err);
   });
 
@@ -459,8 +460,10 @@ async function recupererBots(req, res) {
 async function associationBotDiscord(req, res) {
   console.log("post /associationBotDiscord");
 
-  let botPort=req.body.botPort;
-  let token=req.body.token
+  let botPort = req.body.botPort;
+  let token = req.body.token
+
+  const prefix = "!bot"
 
   //discord
   const clientDiscord = new Discord.Client();
@@ -468,10 +471,53 @@ async function associationBotDiscord(req, res) {
     console.log('Ready!');
   });
   clientDiscord.login(token);//token du bot discord
-  clientDiscord.on('message', message => {
-    if (message.content === '!ping') {
-      // send back "Pong." to the channel the message was sent in
-      message.channel.send('Pong.');
+  clientDiscord.on('message', async function (chatmessage) {
+
+    //check prefix to see if bot has to respond
+    var messageSplited = chatmessage.toString().split(' ');
+    var messagePrefix = messageSplited[0];
+  
+
+    if (messagePrefix.toString().localeCompare(prefix)==0) {
+      const messageLength = messageSplited.length;
+      let realMessage = "";
+
+      for (let i = 1;i<messageLength;i++){
+        realMessage = realMessage + messageSplited[i] + " ";
+      }
+
+      //request construction
+
+      const username = "men";
+      const vars = undefined;
+      const message = realMessage;
+
+      let corp = {
+        username,
+        message,
+        vars
+      }
+
+
+      let param = {
+        method: 'post',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body : JSON.stringify(corp)
+      }
+
+      try {
+        let response = await fetch('http://localhost:' + botPort + '/reply', param);
+        const json = await response.json();
+        let botResponse = json.reply;
+        chatmessage.channel.send(botResponse); //response display in the Discord chat
+      } catch (error) {
+        console.log(error);
+        chatmessage.channel.send('An error occured');
+      }
+
     }
     //todo : associer cerveau bot discord au cerveau du bot rivescript
   });
