@@ -17,7 +17,8 @@
     <script src="scripts/chat.js"></script>
 </head>
 
-<body onload="chooseBot(<%= botPort %>)">
+<body onload="onLoadChatEjs(<%= botPort %>, '<%= pseudo %>')"> 
+
     <div class="btnContainer">
         <div>
             <% if (locals.isAdmin) {%>
