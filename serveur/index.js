@@ -27,7 +27,7 @@ const IN_PROD = NODE_ENV === "production"
 
 app.use(session({
   name:"sid",
-  secret:'key',
+  secret:'this a nynyserv',
   resave: false,
   saveUninitialized:false,
   cookie:{
