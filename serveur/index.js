@@ -499,7 +499,7 @@ async function associationBotDiscord(req, res) {
 
       //request construction
 
-      const username = "men";
+      const username = "discord";
       const vars = undefined;
       const message = realMessage;
 
