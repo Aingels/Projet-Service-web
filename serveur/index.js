@@ -94,6 +94,7 @@ async function inscription(req, res) {
     .then((result) => {
       if (result != null) {
         console.log(`index : user found : ${result.pseudo}`);
+        req.session.isAuth =true;
         res.status(200).json({
           "status": "ok",
         });
@@ -235,7 +236,7 @@ async function getUserSession(req,res) {
     })
   } else {
     console.log("session not defined")
-    res.status(200).json({
+    res.status(500).json({
       "status":"sessiono not defined",
       "username": username,
       "favcolor": favcolor

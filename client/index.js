@@ -3,6 +3,7 @@ const app = express();
 const port = 3001;
 var bodyParser = require('body-parser');
 var fetch = require("node-fetch");
+var session = require('express-session');//session
 
 app.set('view engine', 'ejs');
 
@@ -11,6 +12,9 @@ app.use(express.static(__dirname+'/public')); // to get static pages
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+//session
+app.use(session({secret: "shhh"}));
+var sess;
 
 
 //default url
@@ -50,6 +54,14 @@ app.post('/inscription', async function(req, res){
         });
     console.log(`Inscription du user : ${JSON.stringify(req.body.pseudo)} , ${JSON.stringify(req.body.mdp)} : ${response.status}`);
 	if(response.status=="ok"){
+
+		//session --> ajouté droit user
+	    sess=req.session;
+	    sess.pseudo=pseudoGiven;
+	    sess.mdp=mdpGiven;
+	    sess.favoriteColor=null;
+	    sess.isAuth=true;
+	    sess.isAdmmin=false;
 
 		//récupération des bots
 		let bots = await getBots();
@@ -95,6 +107,14 @@ app.post('/connexion', async function(req, res){
 		//récupération des bots
 		let bots = await getBots();
 
+		//session --> ajouté droit user
+	    sess=req.session;
+	    sess.pseudo=pseudoGiven;
+	    sess.mdp=mdpGiven;
+	    sess.favoriteColor=null;
+	    sess.isAuth=true;
+	    sess.isAdmin=response.isAdmin;  
+
 		res.render(`chat`,{'botPort':-1 , pseudo:pseudoGiven , isAdmin:response.isAdmin , "bots":bots});
 	}else{
 		res.render('connexion',{wrongId:true});
@@ -102,11 +122,19 @@ app.post('/connexion', async function(req, res){
   }
 );
 
-app.get("/chat",(req,res)=> {
+app.get("/chat",async function (req,res) {
 	console.log("get /chat")
 
-	let port = req.query.port;
-	res.render("chat");
+	//vérification droits
+	if(sess == undefined || ! sess.isAuth){
+		console.log("Session non autorisée !");
+		res.render('connexion',{wrongSession:true});
+	}else{
+		//récupération des bots
+		let bots = await getBots();
+
+		res.render(`chat`,{'botPort':-1 , isAdmin:sess.isAdmin , "bots":bots});
+	}
 })
 
 //---------------------- partie administration ------------------------------------
@@ -114,7 +142,14 @@ app.get("/chat",(req,res)=> {
 //création d'un bot
 app.get('/adminAccueil', async function(req, res){
 	console.log("get /adminAccueil")
-	res.render('adminAccueil',{});
+
+	//vérification droits
+	if(sess == undefined || ! sess.isAdmin){
+		console.log("Session non autorisée !");
+		res.render('connexion',{wrongSession:true});
+	}else{
+		res.render('adminAccueil',{});
+	}
   }
 );
 
@@ -122,65 +157,78 @@ app.get('/adminAccueil', async function(req, res){
 app.get('/creerBot', async function(req, res){
 	console.log("get /creerBot")
 
-	console.log("recupererCerveaux");
+	//vérification droits
+	if(sess == undefined || ! sess.isAdmin){
+		console.log("Session non autorisée !");
+		res.render('connexion',{wrongSession:true});
+	}else{
+		console.log("recupererCerveaux");
 
-	//fetch request
-	await fetch('http://localhost:3000/recupererCerveaux')
-		//traitement de la réponse
-		.then(response => response.json())//pay attention not using res twice 
-		.then(response => {
-			console.log(`recupererCerveaux : ${response.status}`);
-			if(response.status=="ok"){
-				console.log(`cerveaux :`);
-				for(const cerveau of response.cerveaux){
-					console.log(`${cerveau}`);
+		//fetch request
+		await fetch('http://localhost:3000/recupererCerveaux')
+			//traitement de la réponse
+			.then(response => response.json())//pay attention not using res twice 
+			.then(response => {
+				console.log(`recupererCerveaux : ${response.status}`);
+				if(response.status=="ok"){
+					console.log(`cerveaux :`);
+					for(const cerveau of response.cerveaux){
+						console.log(`${cerveau}`);
+					}
+					res.render(`adminCreerBot`,{"cerveaux":response.cerveaux});
+				}else{
+					res.render('adminCreerBot',{});
 				}
-				res.render(`adminCreerBot`,{"cerveaux":response.cerveaux});
-			}else{
-				res.render('adminCreerBot',{});
-			}
-		})
-		.catch((err)=>{
-              console.log(`(error) recupererCerveaux : ${response.status}`);
-        });    
+			})
+			.catch((err)=>{
+	              console.log(`(error) recupererCerveaux : ${response.status}`);
+	        });    
+	}	
   }
 );
 
 app.post('/creerBot', async function(req,res){
 	console.log("post /creerBot");
-	var data=req.body;
 
-	//fetch
-	const response = await fetch('http://localhost:3000/creerBot', 
-		{
-			//mode: 'no-cors',
-			method:"POST",
-		 	headers: {
-		      'Accept': 'application/json',
-		      'Content-Type': 'application/json'
-		    },
-		    body: JSON.stringify(data)
-		})
-		.then(response => response.json())//pay attention not using res twice 
-		.catch((err)=>{
-            console.log(`(error) creerBot : ${response.status}`);
-        });	
-    console.log(`post creerBot : tentative de creation bot : ${JSON.stringify(response.status)}`);
-	if(response.status=="bot created"){
-
-		console.log("creation bot suceed");
-		console.log(`botName : ${response.botName}`);
-		console.log(`botCerveau : ${response.botCerveau}`);
-		console.log(`botPort : ${response.botPort}`);
-		let botPort=response.botPort;
-
-		//récupération des bots
-		let bots = await getBots();
-
-	    res.render(`chat`,{'botPort':botPort , "bots":bots});
+	//vérification droits
+	if(sess == undefined || ! sess.isAdmin){
+		console.log("Session non autorisée !");
+		res.render('connexion',{wrongSession:true});
 	}else{
-		console.log("creation bot failed (nom de bot déjà pris)");		
-		res.render('adminCreerBot',{"nomPris":true,"cerveaux":response.cerveaux});
+		var data=req.body;
+
+		//fetch
+		const response = await fetch('http://localhost:3000/creerBot', 
+			{
+				//mode: 'no-cors',
+				method:"POST",
+			 	headers: {
+			      'Accept': 'application/json',
+			      'Content-Type': 'application/json'
+			    },
+			    body: JSON.stringify(data)
+			})
+			.then(response => response.json())//pay attention not using res twice 
+			.catch((err)=>{
+	            console.log(`(error) creerBot : ${response.status}`);
+	        });	
+	    console.log(`post creerBot : tentative de creation bot : ${JSON.stringify(response.status)}`);
+		if(response.status=="bot created"){
+
+			console.log("creation bot suceed");
+			console.log(`botName : ${response.botName}`);
+			console.log(`botCerveau : ${response.botCerveau}`);
+			console.log(`botPort : ${response.botPort}`);
+			let botPort=response.botPort;
+
+			//récupération des bots
+			let bots = await getBots();
+
+		    res.render(`chat`,{'botPort':botPort , "bots":bots , isAdmin:sess.isAdmin});
+		}else{
+			console.log("creation bot failed (nom de bot déjà pris)");		
+			res.render('adminCreerBot',{"nomPris":true,"cerveaux":response.cerveaux});
+		}
 	}
   }
 );
@@ -189,10 +237,16 @@ app.post('/creerBot', async function(req,res){
 app.get('/associationBotDiscord', async function(req, res){
 	console.log("get /associationBotDiscord")
 
-	//récupération des bots
-	let bots = await getBots();
+	//vérification droits
+	if(sess == undefined || ! sess.isAdmin){
+		console.log("Session non autorisée !");
+		res.render('connexion',{wrongSession:true});
+	}else{
+		//récupération des bots
+		let bots = await getBots();
 
-	res.render('adminAssociationBotDiscord',{'botPort':-1 , "bots":bots});
+		res.render('adminAssociationBotDiscord',{'botPort':-1 , "bots":bots});
+	}
   }
 );
 
@@ -200,38 +254,44 @@ app.get('/associationBotDiscord', async function(req, res){
 
 app.post('/associationBotDiscord', async function(req,res){
 	console.log("post /associationBotDiscord");
-	var data=req.body;
 
-	console.log(`token : ${req.body.token}`);
-	console.log(`botPort : ${req.body.botPort}`);
-	let botPort=req.body.botPort;
+	//vérification droits
+	if(sess == undefined || ! sess.isAdmin){
+		console.log("Session non autorisée !");
+		res.render('connexion',{wrongSession:true});
+	}else{
+		var data=req.body;
 
-	//récupération des bots
-	let bots = await getBots();
+		console.log(`token : ${req.body.token}`);
+		console.log(`botPort : ${req.body.botPort}`);
+		let botPort=req.body.botPort;
 
-	//fetch request
-	const response2 = await fetch('http://localhost:3000/associationBotDiscord',
-		{
-				//mode: 'no-cors',
-				method:"POST",
-			 	headers: {
-			      'Accept': 'application/json',
-			      'Content-Type': 'application/json'
-			    },
-			    body: JSON.stringify(req.body)
-			})
-	.catch((err)=>{
-          console.log(`(error) associationBotDiscord`);
-    });
+		//récupération des bots
+		let bots = await getBots();
 
-    console.log(`fetch > associationBotDiscord : ${response2.status}`);	
+		//fetch request
+		const response2 = await fetch('http://localhost:3000/associationBotDiscord',
+			{
+					//mode: 'no-cors',
+					method:"POST",
+				 	headers: {
+				      'Accept': 'application/json',
+				      'Content-Type': 'application/json'
+				    },
+				    body: JSON.stringify(req.body)
+				})
+		.catch((err)=>{
+	          console.log(`(error) associationBotDiscord`);
+	    });
 
-    if(response2.status==200){
-    	res.render(`chat`,{'botPort':botPort , "bots":bots});
-    }else{
-    	res.render('adminAssociationBotDiscord',{'botPort':-1 , "bots":bots});
-    }
+	    console.log(`fetch > associationBotDiscord : ${response2.status}`);	
 
+	    if(response2.status==200){
+	    	res.render(`chat`,{'botPort':botPort , "bots":bots , isAdmin:sess.isAdmin});
+	    }else{
+	    	res.render('adminAssociationBotDiscord',{'botPort':-1 , "bots":bots});
+	    }
+	}
   }
 );
 
