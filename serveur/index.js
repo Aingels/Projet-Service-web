@@ -390,13 +390,14 @@ async function getReply(bot, req, res) {
     message = "empty";
   }
 
-  vars.favcolor = await mongoDBInstance.getFavColor(username);
+  const favcolor = await mongoDBInstance.getFavColor(username);
+  
 
-  if (vars.favcolor == undefined){
+  if (favcolor == undefined){
     favColorInBDD = false;
   } else {
     favColorInBDD = true;
-    bot.setUservar(username,"favcolor",vars.favcolor);
+    bot.setUservar(username,"favcolor",favcolor);
   } 
 
 
