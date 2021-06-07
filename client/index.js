@@ -110,15 +110,28 @@ app.post('/connexion', async function(req, res){
 		//session --> ajouté droit user
 	    sess=req.session;
 	    sess.pseudo=pseudoGiven;
-	    sess.mdp=mdpGiven;
-	    sess.favoriteColor=null;
 	    sess.isAuth=true;
 	    sess.isAdmin=response.isAdmin;  
+	    sess.favoriteColor=null;
 
 		res.render(`chat`,{'botPort':-1 , pseudo:pseudoGiven , isAdmin:response.isAdmin , "bots":bots});
 	}else{
 		res.render('connexion',{wrongId:true});
 	}
+  }
+);
+
+app.get('/deconnexion', function(req, res){
+    console.log("get /deconnexion");
+
+    //session --> retirer droit user
+    sess=req.session;
+ 	sess.pseudo=null;
+    sess.isAuth=null;
+    sess.isAdmin=null;  
+    sess.favoriteColor=null;
+
+    res.redirect('connexion');
   }
 );
 

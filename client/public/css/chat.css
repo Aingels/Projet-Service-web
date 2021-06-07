@@ -183,3 +183,6 @@
     padding : 5%;
 }
 
+.btnContainer{
+    display:flex;
+}

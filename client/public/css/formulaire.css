@@ -46,6 +46,10 @@ input[type=submit]:hover {
     border: 1px solid #53af57;
 }
 
+#red{
+  background-color: #ff5050;
+}
+
 a:link, a:visited{
   background-color: #53af57;
   color: white;
@@ -61,3 +65,4 @@ a:hover, a:active, i{
   color: #53af57;
   border: 1px solid #53af57;
 }
+
