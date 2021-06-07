@@ -16,7 +16,7 @@ class ServiceMongoDB {
 		const client = await this.MongoClient.connect(this.uri, { useNewUrlParser: true, useUnifiedTopology: true });
 		var db = client.db("TPNodejs");
 		var collection = db.collection("User");
-		var user = { pseudo: pseudoGiven, mdp: mdpGiven, favoriteColor:null };
+		var user = { pseudo: pseudoGiven, mdp: mdpGiven };
 		//envoyer la réponse
 		var pseudoAlreadyTaken = await collection.findOne({ pseudo: pseudoGiven });
 		if (pseudoAlreadyTaken != null) {
